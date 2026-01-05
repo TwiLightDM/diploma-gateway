@@ -1,0 +1,15 @@
+name: diploma
+
+services:
+  postgres:
+    image: postgres:17
+    container_name: "postgres"
+    env_file:
+      - .env
+    ports:
+      - "${POSTGRES_PORT}:${POSTGRES_PORT}"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:
