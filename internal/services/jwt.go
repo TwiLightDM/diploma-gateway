@@ -25,7 +25,7 @@ func (s *JWTService) ParseJWT(tokenString string) (map[string]any, error) {
 	})
 
 	if err != nil {
-		return nil, fmt.Errorf("failed to parse token: %w", UnexpectedSigningMethodError)
+		return nil, fmt.Errorf("failed to parse token: %w", ErrUnexpectedSigningMethod)
 	}
 
 	claims, ok := token.Claims.(jwt.MapClaims)
@@ -35,7 +35,7 @@ func (s *JWTService) ParseJWT(tokenString string) (map[string]any, error) {
 
 	if exp, ok := claims["exp"].(float64); ok {
 		if time.Now().Unix() > int64(exp) {
-			return nil, fmt.Errorf("token expired: %w", LifetimeIsOverError)
+			return nil, fmt.Errorf("token expired: %w", ErrLifetimeIsOver)
 		}
 	}
 

@@ -13,6 +13,8 @@ migrate:
 	$(MIGRATE) up
 migrate-down:
 	$(MIGRATE) down
+migrate-force:
+	$(MIGRATE) force ${VERSION}
 run:
 	go run cmd/main.go
 swagger:

@@ -14,6 +14,7 @@ type LoginResponse struct {
 }
 
 type SignUpResponse struct {
+	Id    string `json:"id,omitempty"`
 	Error string `json:"error,omitempty"`
 }
 
