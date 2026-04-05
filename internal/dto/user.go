@@ -2,26 +2,24 @@ package dto
 
 type UserRequest struct {
 	FullName string `json:"full_name"`
-	Role     string `json:"role"`
 	Email    string `json:"email"`
 	Password string `json:"password"`
 }
 
 type LoginResponse struct {
-	AccessToken  string `json:"access_token,omitempty"`
-	RefreshToken string `json:"refresh_token,omitempty"`
-	Error        string `json:"error,omitempty"`
+	AccessToken  string `json:"access_token"`
+	RefreshToken string `json:"refresh_token"`
 }
 
 type SignUpResponse struct {
-	Id    string `json:"id,omitempty"`
-	Error string `json:"error,omitempty"`
+	User         UserResponse `json:"user"`
+	AccessToken  string       `json:"access_token"`
+	RefreshToken string       `json:"refresh_token"`
 }
 
 type UserResponse struct {
-	Id       string `json:"id,omitempty"`
-	FullName string `json:"full_name,omitempty"`
-	Role     string `json:"role,omitempty"`
-	Email    string `json:"email,omitempty"`
-	Error    string `json:"error,omitempty"`
+	Id       string `json:"id"`
+	FullName string `json:"full_name"`
+	Role     string `json:"role"`
+	Email    string `json:"email"`
 }

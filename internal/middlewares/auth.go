@@ -1,10 +1,11 @@
 package middlewares
 
 import (
-	"github.com/TwiLightDM/diploma-gateway/internal/services"
-	"github.com/labstack/echo/v4"
 	"net/http"
 	"strings"
+
+	"github.com/TwiLightDM/diploma-gateway/internal/services"
+	"github.com/labstack/echo/v4"
 )
 
 func AuthMiddleware(jwtService *services.JWTService) echo.MiddlewareFunc {
@@ -25,7 +26,7 @@ func AuthMiddleware(jwtService *services.JWTService) echo.MiddlewareFunc {
 				return echo.NewHTTPError(http.StatusUnauthorized, err.Error())
 			}
 
-			c.Set("user_id", claims["user_id"])
+			c.Set("user_id", claims["sub"])
 			c.Set("role", claims["role"])
 
 			return next(c)

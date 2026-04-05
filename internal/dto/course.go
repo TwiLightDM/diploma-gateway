@@ -8,18 +8,16 @@ type CourseRequest struct {
 }
 
 type CourseResponse struct {
-	Id          string `json:"id,omitempty"`
-	Title       string `json:"title,omitempty"`
-	Description string `json:"description,omitempty"`
-	AccessType  string `json:"access_type,omitempty"`
-	PublishedAt string `json:"published_at,omitempty"`
-	OwnerId     string `json:"owner_id,omitempty"`
-	Error       string `json:"error,omitempty"`
+	Id          string `json:"id"`
+	Title       string `json:"title"`
+	Description string `json:"description"`
+	AccessType  string `json:"access_type"`
+	PublishedAt string `json:"published_at"`
+	OwnerId     string `json:"owner_id"`
 }
 
 type CourseListResponse struct {
-	Courses []CourseResponse `json:"courses,omitempty"`
-	Error   string           `json:"error,omitempty"`
+	Courses []CourseResponse `json:"courses"`
 }
 
 type ReadCoursesByGroupIdsRequest struct {

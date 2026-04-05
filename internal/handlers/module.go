@@ -2,11 +2,12 @@ package handlers
 
 import (
 	"context"
+	"net/http"
+	"time"
+
 	"github.com/TwiLightDM/diploma-gateway/internal/dto"
 	"github.com/TwiLightDM/diploma-gateway/internal/grpc/course-service"
 	"github.com/labstack/echo/v4"
-	"net/http"
-	"time"
 )
 
 type ModuleHandler struct {
@@ -20,7 +21,7 @@ func NewModuleHandler(courseClient *course_service.CourseClient) *ModuleHandler 
 func (h *ModuleHandler) CreateModule(c echo.Context) error {
 	var request dto.ModuleRequest
 	if err := c.Bind(&request); err != nil {
-		return c.JSON(http.StatusBadRequest, dto.SignUpResponse{Error: "invalid request"})
+		return c.JSON(http.StatusBadRequest, dto.ErrorResponse{Error: "invalid request"})
 	}
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
@@ -28,7 +29,7 @@ func (h *ModuleHandler) CreateModule(c echo.Context) error {
 
 	response, err := h.courseClient.CreateModule(ctx, request.Title, request.Description, request.CourseId)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, dto.ModuleResponse{Error: err.Error()})
+		return c.JSON(http.StatusInternalServerError, dto.ErrorResponse{Error: err.Error()})
 	}
 
 	return c.JSON(http.StatusOK, dto.ModuleResponse{
@@ -43,7 +44,7 @@ func (h *ModuleHandler) CreateModule(c echo.Context) error {
 func (h *ModuleHandler) ReadModule(c echo.Context) error {
 	id := c.Param("id")
 	if id == "" {
-		return c.JSON(http.StatusBadRequest, dto.ModuleResponse{Error: "invalid request"})
+		return c.JSON(http.StatusBadRequest, dto.ErrorResponse{Error: "invalid request"})
 	}
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
@@ -51,7 +52,7 @@ func (h *ModuleHandler) ReadModule(c echo.Context) error {
 
 	response, err := h.courseClient.ReadModule(ctx, id)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, dto.ModuleResponse{Error: err.Error()})
+		return c.JSON(http.StatusInternalServerError, dto.ErrorResponse{Error: err.Error()})
 	}
 
 	return c.JSON(http.StatusOK, dto.ModuleResponse{
@@ -64,17 +65,17 @@ func (h *ModuleHandler) ReadModule(c echo.Context) error {
 }
 
 func (h *ModuleHandler) ReadAllModulesByCourseId(c echo.Context) error {
-	ownerId := c.Param("id")
-	if ownerId == "" {
-		return c.JSON(http.StatusBadRequest, dto.ModuleResponse{Error: "invalid request"})
+	courseId := c.Param("course_id")
+	if courseId == "" {
+		return c.JSON(http.StatusBadRequest, dto.ErrorResponse{Error: "invalid request"})
 	}
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	response, err := h.courseClient.ReadAllModulesByCourseId(ctx, ownerId)
+	response, err := h.courseClient.ReadAllModulesByCourseId(ctx, courseId)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, dto.ModuleResponse{Error: err.Error()})
+		return c.JSON(http.StatusInternalServerError, dto.ErrorResponse{Error: err.Error()})
 	}
 
 	modules := make([]dto.ModuleResponse, 0, len(response.Modules))
@@ -96,12 +97,12 @@ func (h *ModuleHandler) ReadAllModulesByCourseId(c echo.Context) error {
 func (h *ModuleHandler) UpdateModule(c echo.Context) error {
 	var request dto.ModuleRequest
 	if err := c.Bind(&request); err != nil {
-		return c.JSON(http.StatusBadRequest, dto.ModuleResponse{Error: "invalid request"})
+		return c.JSON(http.StatusBadRequest, dto.ErrorResponse{Error: "invalid request"})
 	}
 
 	id := c.Param("id")
 	if id == "" {
-		return c.JSON(http.StatusBadRequest, dto.ModuleResponse{Error: "invalid request"})
+		return c.JSON(http.StatusBadRequest, dto.ErrorResponse{Error: "invalid request"})
 	}
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
@@ -109,7 +110,7 @@ func (h *ModuleHandler) UpdateModule(c echo.Context) error {
 
 	response, err := h.courseClient.UpdateModule(ctx, id, request.Title, request.Description, request.Position)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, dto.ModuleResponse{Error: err.Error()})
+		return c.JSON(http.StatusInternalServerError, dto.ErrorResponse{Error: err.Error()})
 	}
 
 	return c.JSON(http.StatusOK, dto.ModuleResponse{
@@ -124,14 +125,14 @@ func (h *ModuleHandler) UpdateModule(c echo.Context) error {
 func (h *ModuleHandler) DeleteModule(c echo.Context) error {
 	id := c.Param("id")
 	if id == "" {
-		return c.JSON(http.StatusBadRequest, dto.ModuleResponse{Error: "invalid request"})
+		return c.JSON(http.StatusBadRequest, dto.ErrorResponse{Error: "invalid request"})
 	}
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 	_, err := h.courseClient.DeleteModule(ctx, id)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, dto.ModuleResponse{Error: err.Error()})
+		return c.JSON(http.StatusInternalServerError, dto.ErrorResponse{Error: err.Error()})
 	}
 
 	return c.JSON(http.StatusNoContent, nil)

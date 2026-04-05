@@ -2,6 +2,7 @@ package course_service
 
 import (
 	"context"
+
 	"github.com/TwiLightDM/diploma-course-service/proto/courseservicepb"
 )
 
@@ -20,7 +21,11 @@ func (c *CourseClient) ReadCourse(ctx context.Context, id string) (*courseservic
 	})
 }
 
-func (c *CourseClient) ReadAllCourseByOwnerId(ctx context.Context, ownerId string) (*courseservicepb.ReadAllCoursesByOwnerIdResponse, error) {
+func (c *CourseClient) ReadAllCourses(ctx context.Context) (*courseservicepb.ReadAllCoursesResponse, error) {
+	return c.course.ReadAllCourses(ctx, &courseservicepb.ReadAllCoursesRequest{})
+}
+
+func (c *CourseClient) ReadAllCoursesByOwnerId(ctx context.Context, ownerId string) (*courseservicepb.ReadAllCoursesByOwnerIdResponse, error) {
 	return c.course.ReadAllCoursesByOwnerId(ctx, &courseservicepb.ReadAllCoursesByOwnerIdRequest{
 		OwnerId: ownerId,
 	})

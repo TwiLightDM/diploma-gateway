@@ -2,7 +2,7 @@ package user_service
 
 import (
 	"context"
-	"fmt"
+
 	"github.com/TwiLightDM/diploma-user-service/proto/userservicepb"
 )
 
@@ -14,18 +14,19 @@ func (c *UserClient) Login(ctx context.Context, email, password string) (*userse
 }
 
 func (c *UserClient) SignUp(ctx context.Context, fullName, role, email, password string) (*userservicepb.SignUpResponse, error) {
-	response, err := c.user.SignUp(ctx, &userservicepb.SignUpRequest{
+	return c.user.SignUp(ctx, &userservicepb.SignUpRequest{
 		FullName: fullName,
 		Role:     role,
 		Email:    email,
 		Password: password,
 	})
+}
 
-	if err != nil {
-		fmt.Println()
-	}
-
-	return response, nil
+func (c *UserClient) Refresh(ctx context.Context, id, role string) (*userservicepb.RefreshResponse, error) {
+	return c.user.Refresh(ctx, &userservicepb.RefreshRequest{
+		Id:   id,
+		Role: role,
+	})
 }
 
 func (c *UserClient) ReadUser(ctx context.Context, id string) (*userservicepb.ReadUserResponse, error) {

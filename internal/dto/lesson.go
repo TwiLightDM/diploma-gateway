@@ -9,16 +9,14 @@ type LessonRequest struct {
 }
 
 type LessonResponse struct {
-	Id          string `json:"id,omitempty"`
-	Title       string `json:"title,omitempty"`
-	Description string `json:"description,omitempty"`
-	Content     string `json:"content,omitempty"`
-	Position    int64  `json:"position,omitempty"`
-	ModuleId    string `json:"module_id,omitempty"`
-	Error       string `json:"error,omitempty"`
+	Id          string `json:"id"`
+	Title       string `json:"title"`
+	Description string `json:"description"`
+	Content     string `json:"content"`
+	Position    int64  `json:"position"`
+	ModuleId    string `json:"module_id"`
 }
 
 type LessonListResponse struct {
-	Lessons []LessonResponse `json:"lessons,omitempty"`
-	Error   string           `json:"error,omitempty"`
+	Lessons []LessonResponse `json:"lessons"`
 }

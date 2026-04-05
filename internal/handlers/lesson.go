@@ -2,11 +2,12 @@ package handlers
 
 import (
 	"context"
+	"net/http"
+	"time"
+
 	"github.com/TwiLightDM/diploma-gateway/internal/dto"
 	"github.com/TwiLightDM/diploma-gateway/internal/grpc/course-service"
 	"github.com/labstack/echo/v4"
-	"net/http"
-	"time"
 )
 
 type LessonHandler struct {
@@ -20,7 +21,7 @@ func NewLessonHandler(courseClient *course_service.CourseClient) *LessonHandler 
 func (h *LessonHandler) CreateLesson(c echo.Context) error {
 	var request dto.LessonRequest
 	if err := c.Bind(&request); err != nil {
-		return c.JSON(http.StatusBadRequest, dto.SignUpResponse{Error: "invalid request"})
+		return c.JSON(http.StatusBadRequest, dto.ErrorResponse{Error: "invalid request"})
 	}
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
@@ -28,7 +29,7 @@ func (h *LessonHandler) CreateLesson(c echo.Context) error {
 
 	response, err := h.courseClient.CreateLesson(ctx, request.Title, request.Description, request.ModuleId)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, dto.LessonResponse{Error: err.Error()})
+		return c.JSON(http.StatusInternalServerError, dto.ErrorResponse{Error: err.Error()})
 	}
 
 	return c.JSON(http.StatusOK, dto.LessonResponse{
@@ -43,7 +44,7 @@ func (h *LessonHandler) CreateLesson(c echo.Context) error {
 func (h *LessonHandler) ReadLesson(c echo.Context) error {
 	id := c.Param("id")
 	if id == "" {
-		return c.JSON(http.StatusBadRequest, dto.LessonResponse{Error: "invalid request"})
+		return c.JSON(http.StatusBadRequest, dto.ErrorResponse{Error: "invalid request"})
 	}
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
@@ -51,7 +52,7 @@ func (h *LessonHandler) ReadLesson(c echo.Context) error {
 
 	response, err := h.courseClient.ReadLesson(ctx, id)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, dto.LessonResponse{Error: err.Error()})
+		return c.JSON(http.StatusInternalServerError, dto.ErrorResponse{Error: err.Error()})
 	}
 
 	return c.JSON(http.StatusOK, dto.LessonResponse{
@@ -64,17 +65,17 @@ func (h *LessonHandler) ReadLesson(c echo.Context) error {
 }
 
 func (h *LessonHandler) ReadAllLessonsByCourseId(c echo.Context) error {
-	ownerId := c.Param("id")
-	if ownerId == "" {
-		return c.JSON(http.StatusBadRequest, dto.LessonResponse{Error: "invalid request"})
+	moduleId := c.Param("module_id")
+	if moduleId == "" {
+		return c.JSON(http.StatusBadRequest, dto.ErrorResponse{Error: "invalid request"})
 	}
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	response, err := h.courseClient.ReadAllLessonsByModuleId(ctx, ownerId)
+	response, err := h.courseClient.ReadAllLessonsByModuleId(ctx, moduleId)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, dto.LessonResponse{Error: err.Error()})
+		return c.JSON(http.StatusInternalServerError, dto.ErrorResponse{Error: err.Error()})
 	}
 
 	lessons := make([]dto.LessonResponse, 0, len(response.Lessons))
@@ -96,12 +97,12 @@ func (h *LessonHandler) ReadAllLessonsByCourseId(c echo.Context) error {
 func (h *LessonHandler) UpdateLesson(c echo.Context) error {
 	var request dto.LessonRequest
 	if err := c.Bind(&request); err != nil {
-		return c.JSON(http.StatusBadRequest, dto.LessonResponse{Error: "invalid request"})
+		return c.JSON(http.StatusBadRequest, dto.ErrorResponse{Error: "invalid request"})
 	}
 
 	id := c.Param("id")
 	if id == "" {
-		return c.JSON(http.StatusBadRequest, dto.LessonResponse{Error: "invalid request"})
+		return c.JSON(http.StatusBadRequest, dto.ErrorResponse{Error: "invalid request"})
 	}
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
@@ -109,7 +110,7 @@ func (h *LessonHandler) UpdateLesson(c echo.Context) error {
 
 	response, err := h.courseClient.UpdateLesson(ctx, id, request.Title, request.Description, request.Position)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, dto.LessonResponse{Error: err.Error()})
+		return c.JSON(http.StatusInternalServerError, dto.ErrorResponse{Error: err.Error()})
 	}
 
 	return c.JSON(http.StatusOK, dto.LessonResponse{
@@ -124,14 +125,14 @@ func (h *LessonHandler) UpdateLesson(c echo.Context) error {
 func (h *LessonHandler) DeleteLesson(c echo.Context) error {
 	id := c.Param("id")
 	if id == "" {
-		return c.JSON(http.StatusBadRequest, dto.LessonResponse{Error: "invalid request"})
+		return c.JSON(http.StatusBadRequest, dto.ErrorResponse{Error: "invalid request"})
 	}
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 	_, err := h.courseClient.DeleteLesson(ctx, id)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, dto.LessonResponse{Error: err.Error()})
+		return c.JSON(http.StatusInternalServerError, dto.ErrorResponse{Error: err.Error()})
 	}
 
 	return c.JSON(http.StatusNoContent, nil)

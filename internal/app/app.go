@@ -3,6 +3,13 @@ package app
 import (
 	"context"
 	"errors"
+	"log"
+	"net/http"
+	"os"
+	"os/signal"
+	"syscall"
+	"time"
+
 	"github.com/TwiLightDM/diploma-gateway/internal/config"
 	"github.com/TwiLightDM/diploma-gateway/internal/grpc/course-service"
 	"github.com/TwiLightDM/diploma-gateway/internal/grpc/user-service"
@@ -11,19 +18,13 @@ import (
 	"github.com/TwiLightDM/diploma-gateway/internal/services"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
-	"log"
-	"net/http"
-	"os"
-	"os/signal"
-	"syscall"
-	"time"
 )
 
 func Run(cfg *config.Config) error {
 	e := echo.New()
 	e.Use(middleware.Recover())
 	e.Use(middleware.CORS())
-	e.Use(middleware.Logger())
+	e.Use(middleware.RequestLogger())
 
 	jwtService := services.NewJWTService(cfg.JWTSecret)
 
@@ -87,31 +88,33 @@ func registerRoutes(e *echo.Echo,
 	public := e.Group("/auth")
 	public.POST("/login", userHandler.Login)
 	public.POST("/signup", userHandler.SignUp)
+	public.POST("/refresh", userHandler.Refresh)
 
 	users := e.Group("/users", authMiddleware)
-	users.GET("", userHandler.ReadUser)
-	users.GET("/:id", userHandler.ReadSelf)
-	users.PATCH("/:id", userHandler.UpdateUser)
-	users.PATCH("/:id/password", userHandler.ChangePassword)
-	users.GET("/:id/courses", courseHandler.ReadAllCoursesByOwnerId)
+	users.GET("/me", userHandler.ReadSelf)
+	users.GET("/:id", userHandler.ReadUser)
+	users.PATCH("", userHandler.UpdateUser)
+	users.PATCH("/password", userHandler.ChangePassword)
 
 	courses := e.Group("/courses", authMiddleware)
 	courses.POST("", courseHandler.CreateCourse)
+	courses.GET("", courseHandler.ReadAllCourses)
+	courses.GET("/my", courseHandler.ReadAllCoursesByOwnerId)
 	courses.GET("/:id", courseHandler.ReadCourse)
 	courses.PATCH("/:id", courseHandler.UpdateCourse)
 	courses.PATCH("/:id/publish", courseHandler.UpdatePublishedAt)
 	courses.DELETE("/:id", courseHandler.DeleteCourse)
-	courses.GET("/:id/modules", moduleHandler.ReadAllModulesByCourseId)
 
 	modules := e.Group("/modules", authMiddleware)
 	modules.POST("", moduleHandler.CreateModule)
+	modules.GET("/courses/:course_id", moduleHandler.ReadAllModulesByCourseId)
 	modules.GET("/:id", moduleHandler.ReadModule)
 	modules.PATCH("/:id", moduleHandler.UpdateModule)
 	modules.DELETE("/:id", moduleHandler.DeleteModule)
-	modules.GET("/:id/lessons", lessonHandler.ReadAllLessonsByCourseId)
 
 	lessons := e.Group("/lessons", authMiddleware)
 	lessons.POST("", lessonHandler.CreateLesson)
+	lessons.GET("/modules/:module_id", lessonHandler.ReadAllLessonsByCourseId)
 	lessons.GET("/:id", lessonHandler.ReadLesson)
 	lessons.PATCH("/:id", lessonHandler.UpdateLesson)
 	lessons.DELETE("/:id", lessonHandler.DeleteLesson)
