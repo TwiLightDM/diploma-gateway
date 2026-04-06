@@ -1,19 +1,22 @@
 package course_service
 
 import (
+	"log"
+
 	"github.com/TwiLightDM/diploma-course-service/proto/courseservicepb"
+	"github.com/TwiLightDM/diploma-course-service/proto/groupcourseservicepb"
 	"github.com/TwiLightDM/diploma-course-service/proto/lessonservicepb"
 	"github.com/TwiLightDM/diploma-course-service/proto/moduleservicepb"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
-	"log"
 )
 
 type CourseClient struct {
-	course courseservicepb.CourseServiceClient
-	module moduleservicepb.ModuleServiceClient
-	lesson lessonservicepb.LessonServiceClient
-	conn   *grpc.ClientConn
+	course      courseservicepb.CourseServiceClient
+	module      moduleservicepb.ModuleServiceClient
+	lesson      lessonservicepb.LessonServiceClient
+	groupCourse groupcourseservicepb.GroupCourseServiceClient
+	conn        *grpc.ClientConn
 }
 
 func NewCourseClient(address string) *CourseClient {
@@ -27,10 +30,11 @@ func NewCourseClient(address string) *CourseClient {
 	}
 
 	return &CourseClient{
-		course: courseservicepb.NewCourseServiceClient(conn),
-		module: moduleservicepb.NewModuleServiceClient(conn),
-		lesson: lessonservicepb.NewLessonServiceClient(conn),
-		conn:   conn,
+		course:      courseservicepb.NewCourseServiceClient(conn),
+		module:      moduleservicepb.NewModuleServiceClient(conn),
+		lesson:      lessonservicepb.NewLessonServiceClient(conn),
+		groupCourse: groupcourseservicepb.NewGroupCourseServiceClient(conn),
+		conn:        conn,
 	}
 }
 

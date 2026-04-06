@@ -32,18 +32,21 @@ func Run(cfg *config.Config) error {
 
 	userClient := user_service.NewUserClient(cfg.UserGRPCAddr)
 	userHandler := handlers.NewUserHandler(userClient)
+	groupHandler := handlers.NewGroupHandler(userClient)
+	groupMemberHandler := handlers.NewGroupMemberHandler(userClient)
 
 	courseClient := course_service.NewCourseClient(cfg.CourseGRPCAddr)
 	courseHandler := handlers.NewCourseHandler(courseClient)
 	moduleHandler := handlers.NewModuleHandler(courseClient)
 	lessonHandler := handlers.NewLessonHandler(courseClient)
+	groupCourseHandler := handlers.NewGroupCourseHandler(courseClient)
 
 	defer func() {
 		log.Println("Closing gRPC connection to user service")
 		_ = userClient.Close()
 	}()
 
-	registerRoutes(e, authMiddleware, userHandler, courseHandler, moduleHandler, lessonHandler)
+	registerRoutes(e, authMiddleware, userHandler, groupHandler, groupMemberHandler, courseHandler, moduleHandler, lessonHandler, groupCourseHandler)
 
 	server := &http.Server{
 		Addr:    ":" + cfg.GatewayPort,
@@ -81,16 +84,38 @@ func Run(cfg *config.Config) error {
 func registerRoutes(e *echo.Echo,
 	authMiddleware echo.MiddlewareFunc,
 	userHandler *handlers.UserHandler,
+	groupHandler *handlers.GroupHandler,
+	groupMemberHandler *handlers.GroupMemberHandler,
 	courseHandler *handlers.CourseHandler,
 	moduleHandler *handlers.ModuleHandler,
 	lessonHandler *handlers.LessonHandler,
+	groupCourseHandler *handlers.GroupCourseHandler,
 ) {
 	public := e.Group("/auth")
 	public.POST("/login", userHandler.Login)
 	public.POST("/signup", userHandler.SignUp)
-	public.POST("/refresh", userHandler.Refresh)
+	public.POST("/refresh", userHandler.Refresh, authMiddleware)
 
 	users := e.Group("/users", authMiddleware)
+	users.GET("/me", userHandler.ReadSelf)
+	users.GET("", userHandler.ReadUser)
+	users.PATCH("", userHandler.UpdateUser)
+	users.PATCH("/password", userHandler.ChangePassword)
+	users.GET("/courses", courseHandler.ReadAllCoursesByOwnerId)
+	users.GET("/groups", groupHandler.ReadAllGroupsByOwnerId)
+	users.GET("/:id/group-members", groupMemberHandler.ReadAllGroupMembersByUserId)
+
+	groups := e.Group("/groups", authMiddleware)
+	groups.POST("", groupHandler.CreateGroup)
+	groups.GET("/:id", groupHandler.ReadGroup)
+	groups.PATCH("/:id", groupHandler.UpdateGroup)
+	groups.DELETE("/:id", groupHandler.DeleteGroup)
+	groups.GET("/:id/group-members", groupMemberHandler.ReadAllGroupMembersByGroupId)
+	groups.GET("/:id/group-courses", groupCourseHandler.ReadAllGroupCoursesByGroupId)
+
+	groupMembers := e.Group("/group-members", authMiddleware)
+	groupMembers.POST("", groupMemberHandler.CreateGroupMember)
+	groupMembers.DELETE("/:id", groupMemberHandler.DeleteGroupMember)
 	users.GET("/me", userHandler.ReadSelf)
 	users.GET("/:id", userHandler.ReadUser)
 	users.PATCH("", userHandler.UpdateUser)
@@ -104,6 +129,11 @@ func registerRoutes(e *echo.Echo,
 	courses.PATCH("/:id", courseHandler.UpdateCourse)
 	courses.PATCH("/:id/publish", courseHandler.UpdatePublishedAt)
 	courses.DELETE("/:id", courseHandler.DeleteCourse)
+	courses.GET("/:id/group-courses", groupCourseHandler.ReadAllGroupCoursesByCourseId)
+
+	groupCourses := e.Group("/group-courses", authMiddleware)
+	groupCourses.POST("", groupCourseHandler.CreateGroupCourse)
+	groupCourses.DELETE("/:id", groupCourseHandler.DeleteGroupCourse)
 
 	modules := e.Group("/modules", authMiddleware)
 	modules.POST("", moduleHandler.CreateModule)

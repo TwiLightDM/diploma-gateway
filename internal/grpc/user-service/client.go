@@ -1,15 +1,20 @@
 package user_service
 
 import (
+	"log"
+
+	"github.com/TwiLightDM/diploma-user-service/proto/groupmemberservicepb"
+	"github.com/TwiLightDM/diploma-user-service/proto/groupservicepb"
 	"github.com/TwiLightDM/diploma-user-service/proto/userservicepb"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
-	"log"
 )
 
 type UserClient struct {
-	user userservicepb.UserServiceClient
-	conn *grpc.ClientConn
+	user        userservicepb.UserServiceClient
+	group       groupservicepb.GroupServiceClient
+	groupMember groupmemberservicepb.GroupMemberServiceClient
+	conn        *grpc.ClientConn
 }
 
 func NewUserClient(address string) *UserClient {
@@ -23,8 +28,10 @@ func NewUserClient(address string) *UserClient {
 	}
 
 	return &UserClient{
-		user: userservicepb.NewUserServiceClient(conn),
-		conn: conn,
+		user:        userservicepb.NewUserServiceClient(conn),
+		group:       groupservicepb.NewGroupServiceClient(conn),
+		groupMember: groupmemberservicepb.NewGroupMemberServiceClient(conn),
+		conn:        conn,
 	}
 }
 

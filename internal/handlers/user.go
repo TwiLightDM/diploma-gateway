@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"time"
 
@@ -46,6 +47,8 @@ func (h *UserHandler) SignUp(c echo.Context) error {
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
+
+	fmt.Println(request.FullName)
 
 	response, err := h.userClient.SignUp(ctx, request.FullName, "student", request.Email, request.Password)
 	if err != nil {

@@ -2,6 +2,7 @@ package course_service
 
 import (
 	"context"
+
 	"github.com/TwiLightDM/diploma-course-service/proto/lessonservicepb"
 )
 
@@ -25,11 +26,12 @@ func (c *CourseClient) ReadAllLessonsByModuleId(ctx context.Context, moduleId st
 	})
 }
 
-func (c *CourseClient) UpdateLesson(ctx context.Context, id, title, description string, position int64) (*lessonservicepb.UpdateLessonResponse, error) {
+func (c *CourseClient) UpdateLesson(ctx context.Context, id, title, description, content string, position int64) (*lessonservicepb.UpdateLessonResponse, error) {
 	return c.lesson.UpdateLesson(ctx, &lessonservicepb.UpdateLessonRequest{
 		Id:          id,
 		Title:       title,
 		Description: description,
+		Content:     content,
 		Position:    position,
 	})
 }
