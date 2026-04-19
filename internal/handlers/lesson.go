@@ -108,7 +108,7 @@ func (h *LessonHandler) UpdateLesson(c echo.Context) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	response, err := h.courseClient.UpdateLesson(ctx, id, request.Title, request.Description, request.Position)
+	response, err := h.courseClient.UpdateLesson(ctx, id, request.Title, request.Description, request.Content, request.Position)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, dto.ErrorResponse{Error: err.Error()})
 	}
