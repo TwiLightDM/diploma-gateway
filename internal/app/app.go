@@ -88,7 +88,7 @@ func registerRoutes(e *echo.Echo,
 	public := e.Group("/auth")
 	public.POST("/login", userHandler.Login)
 	public.POST("/signup", userHandler.SignUp)
-	public.POST("/refresh", userHandler.Refresh)
+	public.POST("/refresh", userHandler.Refresh, authMiddleware)
 
 	users := e.Group("/users", authMiddleware)
 	users.GET("/me", userHandler.ReadSelf)

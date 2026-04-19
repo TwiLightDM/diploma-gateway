@@ -8,6 +8,8 @@ import (
 	"github.com/TwiLightDM/diploma-gateway/internal/dto"
 	"github.com/TwiLightDM/diploma-gateway/internal/grpc/course-service"
 	"github.com/labstack/echo/v4"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 type CourseHandler struct {
@@ -31,7 +33,14 @@ func (h *CourseHandler) CreateCourse(c echo.Context) error {
 
 	response, err := h.courseClient.CreateCourse(ctx, request.Title, request.Description, request.AccessType, ownerId)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, dto.ErrorResponse{Error: err.Error()})
+		if st, ok := status.FromError(err); ok {
+			switch st.Code() {
+			case codes.AlreadyExists:
+				return c.JSON(http.StatusConflict, dto.ErrorResponse{Error: "course already exists"})
+			default:
+				return c.JSON(http.StatusInternalServerError, dto.ErrorResponse{Error: err.Error()})
+			}
+		}
 	}
 
 	return c.JSON(http.StatusOK, dto.CourseResponse{
@@ -59,12 +68,14 @@ func (h *CourseHandler) ReadCourse(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusOK, dto.CourseResponse{
-		Id:          response.Course.Id,
-		Title:       response.Course.Title,
-		Description: response.Course.Description,
-		AccessType:  response.Course.AccessType,
-		PublishedAt: response.Course.PublishedAt,
-		OwnerId:     response.Course.OwnerId,
+		Id:              response.Course.Id,
+		Title:           response.Course.Title,
+		Description:     response.Course.Description,
+		AccessType:      response.Course.AccessType,
+		PublishedAt:     response.Course.PublishedAt,
+		OwnerId:         response.Course.OwnerId,
+		AmountOfModules: int(response.Course.AmountOfModules),
+		AmountOfLessons: int(response.Course.AmountOfLessons),
 	})
 }
 
@@ -80,12 +91,14 @@ func (h *CourseHandler) ReadAllCourses(c echo.Context) error {
 	courses := make([]dto.CourseResponse, 0, len(response.Courses))
 	for _, course := range response.Courses {
 		courses = append(courses, dto.CourseResponse{
-			Id:          course.Id,
-			Title:       course.Title,
-			Description: course.Description,
-			AccessType:  course.AccessType,
-			PublishedAt: course.PublishedAt,
-			OwnerId:     course.OwnerId,
+			Id:              course.Id,
+			Title:           course.Title,
+			Description:     course.Description,
+			AccessType:      course.AccessType,
+			PublishedAt:     course.PublishedAt,
+			OwnerId:         course.OwnerId,
+			AmountOfModules: int(course.AmountOfModules),
+			AmountOfLessons: int(course.AmountOfLessons),
 		})
 	}
 
@@ -111,12 +124,14 @@ func (h *CourseHandler) ReadAllCoursesByOwnerId(c echo.Context) error {
 	courses := make([]dto.CourseResponse, 0, len(response.Courses))
 	for _, course := range response.Courses {
 		courses = append(courses, dto.CourseResponse{
-			Id:          course.Id,
-			Title:       course.Title,
-			Description: course.Description,
-			AccessType:  course.AccessType,
-			PublishedAt: course.PublishedAt,
-			OwnerId:     course.OwnerId,
+			Id:              course.Id,
+			Title:           course.Title,
+			Description:     course.Description,
+			AccessType:      course.AccessType,
+			PublishedAt:     course.PublishedAt,
+			OwnerId:         course.OwnerId,
+			AmountOfModules: int(course.AmountOfModules),
+			AmountOfLessons: int(course.AmountOfLessons),
 		})
 	}
 

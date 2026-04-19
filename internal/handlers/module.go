@@ -56,11 +56,12 @@ func (h *ModuleHandler) ReadModule(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusOK, dto.ModuleResponse{
-		Id:          response.Module.Id,
-		Title:       response.Module.Title,
-		Description: response.Module.Description,
-		Position:    response.Module.Position,
-		CourseId:    response.Module.CourseId,
+		Id:              response.Module.Id,
+		Title:           response.Module.Title,
+		Description:     response.Module.Description,
+		Position:        response.Module.Position,
+		CourseId:        response.Module.CourseId,
+		AmountOfLessons: int(response.Module.AmountOfLessons),
 	})
 }
 
@@ -81,11 +82,12 @@ func (h *ModuleHandler) ReadAllModulesByCourseId(c echo.Context) error {
 	modules := make([]dto.ModuleResponse, 0, len(response.Modules))
 	for _, module := range response.Modules {
 		modules = append(modules, dto.ModuleResponse{
-			Id:          module.Id,
-			Title:       module.Title,
-			Description: module.Description,
-			Position:    module.Position,
-			CourseId:    module.CourseId,
+			Id:              module.Id,
+			Title:           module.Title,
+			Description:     module.Description,
+			Position:        module.Position,
+			CourseId:        module.CourseId,
+			AmountOfLessons: int(module.AmountOfLessons),
 		})
 	}
 
