@@ -6,10 +6,11 @@ import (
 	"github.com/TwiLightDM/diploma-course-service/proto/lessonservicepb"
 )
 
-func (c *CourseClient) CreateLesson(ctx context.Context, title, description, moduleId string) (*lessonservicepb.CreateLessonResponse, error) {
+func (c *CourseClient) CreateLesson(ctx context.Context, title, description, content, moduleId string) (*lessonservicepb.CreateLessonResponse, error) {
 	return c.lesson.CreateLesson(ctx, &lessonservicepb.CreateLessonRequest{
 		Title:       title,
 		Description: description,
+		Content:     content,
 		ModuleId:    moduleId,
 	})
 }

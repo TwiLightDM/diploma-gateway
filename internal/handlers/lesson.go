@@ -8,6 +8,8 @@ import (
 	"github.com/TwiLightDM/diploma-gateway/internal/dto"
 	"github.com/TwiLightDM/diploma-gateway/internal/grpc/course-service"
 	"github.com/labstack/echo/v4"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 type LessonHandler struct {
@@ -27,15 +29,23 @@ func (h *LessonHandler) CreateLesson(c echo.Context) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	response, err := h.courseClient.CreateLesson(ctx, request.Title, request.Description, request.ModuleId)
+	response, err := h.courseClient.CreateLesson(ctx, request.Title, request.Description, request.Content, request.ModuleId)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, dto.ErrorResponse{Error: err.Error()})
+		if st, ok := status.FromError(err); ok {
+			switch st.Code() {
+			case codes.AlreadyExists:
+				return c.JSON(http.StatusConflict, dto.ErrorResponse{Error: "course already exists"})
+			default:
+				return c.JSON(http.StatusInternalServerError, dto.ErrorResponse{Error: err.Error()})
+			}
+		}
 	}
 
 	return c.JSON(http.StatusOK, dto.LessonResponse{
 		Id:          response.Lesson.Id,
 		Title:       response.Lesson.Title,
 		Description: response.Lesson.Description,
+		Content:     response.Lesson.Content,
 		Position:    response.Lesson.Position,
 		ModuleId:    response.Lesson.ModuleId,
 	})
@@ -59,6 +69,7 @@ func (h *LessonHandler) ReadLesson(c echo.Context) error {
 		Id:          response.Lesson.Id,
 		Title:       response.Lesson.Title,
 		Description: response.Lesson.Description,
+		Content:     response.Lesson.Content,
 		Position:    response.Lesson.Position,
 		ModuleId:    response.Lesson.ModuleId,
 	})

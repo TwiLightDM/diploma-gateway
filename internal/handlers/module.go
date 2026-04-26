@@ -8,6 +8,8 @@ import (
 	"github.com/TwiLightDM/diploma-gateway/internal/dto"
 	"github.com/TwiLightDM/diploma-gateway/internal/grpc/course-service"
 	"github.com/labstack/echo/v4"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 type ModuleHandler struct {
@@ -29,7 +31,14 @@ func (h *ModuleHandler) CreateModule(c echo.Context) error {
 
 	response, err := h.courseClient.CreateModule(ctx, request.Title, request.Description, request.CourseId)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, dto.ErrorResponse{Error: err.Error()})
+		if st, ok := status.FromError(err); ok {
+			switch st.Code() {
+			case codes.AlreadyExists:
+				return c.JSON(http.StatusConflict, dto.ErrorResponse{Error: "course already exists"})
+			default:
+				return c.JSON(http.StatusInternalServerError, dto.ErrorResponse{Error: err.Error()})
+			}
+		}
 	}
 
 	return c.JSON(http.StatusOK, dto.ModuleResponse{
