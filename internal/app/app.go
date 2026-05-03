@@ -100,8 +100,10 @@ func registerRoutes(e *echo.Echo,
 
 	users := e.Group("/users", authMiddleware)
 	users.GET("/me", userHandler.ReadSelf)
+	users.GET("/all", userHandler.ReadAllUser)
 	users.GET("", userHandler.ReadUser)
 	users.PATCH("", userHandler.UpdateUser)
+	users.PATCH("/role", userHandler.UpdateUserRole)
 	users.PATCH("/password", userHandler.ChangePassword)
 	users.GET("/courses", courseHandler.ReadAllCoursesByOwnerId)
 	users.GET("/groups", groupHandler.ReadAllGroupsByOwnerId)

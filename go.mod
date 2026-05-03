@@ -1,13 +1,13 @@
 module github.com/TwiLightDM/diploma-gateway
 
-go 1.25.0
+go 1.26.2
 
 require (
-	github.com/TwiLightDM/diploma-course-service v0.0.0-20260429134212-91e72d103a86
-	github.com/TwiLightDM/diploma-user-service v0.0.0-20260426160258-7d137ae44d2d
+	github.com/TwiLightDM/diploma-course-service v0.0.0-20260503155144-d3b80dba9ad5
+	github.com/TwiLightDM/diploma-user-service v0.0.0-20260503155125-58ee7f2b8022
 	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/joho/godotenv v1.5.1
-	github.com/labstack/echo/v4 v4.15.1
+	github.com/labstack/echo/v4 v4.15.2
 	google.golang.org/grpc v1.80.0
 )
 
