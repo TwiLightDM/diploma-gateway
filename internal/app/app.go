@@ -16,11 +16,17 @@ import (
 	"github.com/TwiLightDM/diploma-gateway/internal/handlers"
 	"github.com/TwiLightDM/diploma-gateway/internal/middlewares"
 	"github.com/TwiLightDM/diploma-gateway/internal/services"
+	"github.com/TwiLightDM/diploma-gateway/package/databases/postgres"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 )
 
 func Run(cfg *config.Config) error {
+	err := postgres.RunMigrations(cfg.Postgres.Host, cfg.Postgres.Port, cfg.Postgres.Username, cfg.Postgres.Password, cfg.Postgres.Database)
+	if err != nil {
+		return err
+	}
+
 	e := echo.New()
 	e.Use(middleware.Recover())
 	e.Use(middleware.CORS())
