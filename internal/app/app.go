@@ -47,13 +47,28 @@ func Run(cfg *config.Config) error {
 	lessonHandler := handlers.NewLessonHandler(courseClient)
 	lessonFileHandler := handlers.NewLessonFileHandler(courseClient)
 	groupCourseHandler := handlers.NewGroupCourseHandler(courseClient)
+	taskHandler := handlers.NewTaskHandler(courseClient)
+	taskAttemptHandler := handlers.NewTaskAttemptHandler(courseClient)
 
 	defer func() {
 		log.Println("Closing gRPC connection to user service")
 		_ = userClient.Close()
 	}()
 
-	registerRoutes(e, authMiddleware, userHandler, groupHandler, groupMemberHandler, courseHandler, moduleHandler, lessonHandler, lessonFileHandler, groupCourseHandler)
+	registerRoutes(
+		e,
+		authMiddleware,
+		userHandler,
+		groupHandler,
+		groupMemberHandler,
+		courseHandler,
+		moduleHandler,
+		lessonHandler,
+		lessonFileHandler,
+		groupCourseHandler,
+		taskHandler,
+		taskAttemptHandler,
+	)
 
 	server := &http.Server{
 		Addr:    ":" + cfg.GatewayPort,
@@ -98,6 +113,8 @@ func registerRoutes(e *echo.Echo,
 	lessonHandler *handlers.LessonHandler,
 	lessonFileHandler *handlers.LessonFileHandler,
 	groupCourseHandler *handlers.GroupCourseHandler,
+	taskHandler *handlers.TaskHandler,
+	taskAttemptHandler *handlers.TaskAttemptHandler,
 ) {
 	public := e.Group("/auth")
 	public.POST("/login", userHandler.Login)
@@ -163,4 +180,20 @@ func registerRoutes(e *echo.Echo,
 	groupCourses := e.Group("/group-courses", authMiddleware)
 	groupCourses.POST("", groupCourseHandler.CreateGroupCourse)
 	groupCourses.DELETE("/:id", groupCourseHandler.DeleteGroupCourse)
+
+	tasks := e.Group("/tasks", authMiddleware)
+	tasks.POST("", taskHandler.CreateTask)
+	tasks.GET("/modules/:module_id", taskHandler.ReadTasksByModuleId)
+	tasks.GET("/courses/:course_id", taskHandler.ReadTasksByCourseId)
+	tasks.GET("/:id", taskHandler.ReadTask)
+	tasks.PATCH("/:id", taskHandler.UpdateTask)
+	tasks.DELETE("/:id", taskHandler.DeleteTask)
+
+	taskAttempts := e.Group("/task-attempts", authMiddleware)
+	taskAttempts.POST("", taskAttemptHandler.SubmitTaskAttempt)
+	taskAttempts.GET("/courses/:course_id", taskAttemptHandler.ReadAllTaskAttemptsByYourIdAndCourseId)
+	taskAttempts.GET("/modules/:module_id", taskAttemptHandler.ReadAllTaskAttemptsByYourIdAndModuleId)
+	taskAttempts.GET("/users/:user_id/courses/:course_id", taskAttemptHandler.ReadAllTaskAttemptsByUserIdAndCourseId)
+	taskAttempts.GET("/users/:user_id/modules/:module_id", taskAttemptHandler.ReadAllTaskAttemptsByUserIdAndModuleId)
+	taskAttempts.GET("/:id", taskAttemptHandler.ReadTaskAttempt)
 }

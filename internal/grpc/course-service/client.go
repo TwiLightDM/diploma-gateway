@@ -8,6 +8,8 @@ import (
 	"github.com/TwiLightDM/diploma-course-service/proto/lessonfileservicepb"
 	"github.com/TwiLightDM/diploma-course-service/proto/lessonservicepb"
 	"github.com/TwiLightDM/diploma-course-service/proto/moduleservicepb"
+	"github.com/TwiLightDM/diploma-course-service/proto/taskattemptservicepb"
+	"github.com/TwiLightDM/diploma-course-service/proto/taskservicepb"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
@@ -18,6 +20,8 @@ type CourseClient struct {
 	lesson      lessonservicepb.LessonServiceClient
 	lessonFile  lessonfileservicepb.LessonFileServiceClient
 	groupCourse groupcourseservicepb.GroupCourseServiceClient
+	task        taskservicepb.TaskServiceClient
+	taskAttempt taskattemptservicepb.TaskAttemptServiceClient
 	conn        *grpc.ClientConn
 }
 
@@ -37,6 +41,8 @@ func NewCourseClient(address string) *CourseClient {
 		lesson:      lessonservicepb.NewLessonServiceClient(conn),
 		lessonFile:  lessonfileservicepb.NewLessonFileServiceClient(conn),
 		groupCourse: groupcourseservicepb.NewGroupCourseServiceClient(conn),
+		task:        taskservicepb.NewTaskServiceClient(conn),
+		taskAttempt: taskattemptservicepb.NewTaskAttemptServiceClient(conn),
 		conn:        conn,
 	}
 }
