@@ -63,7 +63,7 @@ func (h *GroupHandler) ReadGroup(c echo.Context) error {
 }
 
 func (h *GroupHandler) ReadAllGroupsByOwnerId(c echo.Context) error {
-	ownerId := c.Param("id")
+	ownerId := c.Get("user_id").(string)
 	if ownerId == "" {
 		return c.JSON(http.StatusBadRequest, dto.GroupResponse{Error: "invalid request"})
 	}

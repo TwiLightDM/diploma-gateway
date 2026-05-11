@@ -6,20 +6,20 @@ import (
 	"time"
 
 	"github.com/TwiLightDM/diploma-gateway/internal/dto"
-	"github.com/TwiLightDM/diploma-gateway/internal/grpc/user-service"
+	"github.com/TwiLightDM/diploma-gateway/internal/grpc/course-service"
 	"github.com/labstack/echo/v4"
 )
 
-type GroupMemberHandler struct {
-	userClient *user_service.UserClient
+type GroupCourseHandler struct {
+	courseClient *course_service.CourseClient
 }
 
-func NewGroupMemberHandler(userClient *user_service.UserClient) *GroupMemberHandler {
-	return &GroupMemberHandler{userClient: userClient}
+func NewGroupCourseHandler(courseClient *course_service.CourseClient) *GroupCourseHandler {
+	return &GroupCourseHandler{courseClient: courseClient}
 }
 
-func (h *GroupMemberHandler) CreateGroupMember(c echo.Context) error {
-	var request dto.GroupMemberRequest
+func (h *GroupCourseHandler) CreateGroupCourse(c echo.Context) error {
+	var request dto.GroupCourseRequest
 	if err := c.Bind(&request); err != nil {
 		return c.JSON(http.StatusBadRequest, dto.ErrorResponse{Error: "invalid request"})
 	}
@@ -27,85 +27,85 @@ func (h *GroupMemberHandler) CreateGroupMember(c echo.Context) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()
 
-	response, err := h.userClient.CreateGroupMember(ctx, request.UserId, request.GroupId)
+	response, err := h.courseClient.CreateGroupCourse(ctx, request.CourseId, request.GroupId)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, dto.GroupMemberResponse{Error: err.Error()})
+		return c.JSON(http.StatusInternalServerError, dto.GroupCourseResponse{Error: err.Error()})
 	}
 
-	return c.JSON(http.StatusOK, dto.GroupMemberResponse{
-		Id:      response.GroupMember.Id,
-		UserId:  response.GroupMember.UserId,
-		GroupId: response.GroupMember.GroupId,
+	return c.JSON(http.StatusOK, dto.GroupCourseResponse{
+		Id:       response.GroupCourse.Id,
+		CourseId: response.GroupCourse.CourseId,
+		GroupId:  response.GroupCourse.GroupId,
 	})
 }
 
-func (h *GroupMemberHandler) ReadAllGroupMembersByUserId(c echo.Context) error {
-	userId := c.Param("id")
-	if userId == "" {
-		return c.JSON(http.StatusBadRequest, dto.GroupMemberResponse{Error: "invalid request"})
+func (h *GroupCourseHandler) ReadAllGroupCoursesByCourseId(c echo.Context) error {
+	courseId := c.Param("id")
+	if courseId == "" {
+		return c.JSON(http.StatusBadRequest, dto.GroupCourseResponse{Error: "invalid request"})
 	}
 
 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()
 
-	response, err := h.userClient.ReadAllGroupMembersByUserId(ctx, userId)
+	response, err := h.courseClient.ReadAllGroupCoursesByCourseId(ctx, courseId)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, dto.GroupMemberResponse{Error: err.Error()})
+		return c.JSON(http.StatusInternalServerError, dto.GroupCourseResponse{Error: err.Error()})
 	}
 
-	groupMembers := make([]dto.GroupMemberResponse, 0, len(response.GroupMembers))
-	for _, groupMember := range response.GroupMembers {
-		groupMembers = append(groupMembers, dto.GroupMemberResponse{
-			Id:      groupMember.Id,
-			UserId:  groupMember.UserId,
-			GroupId: groupMember.GroupId,
+	groupCourses := make([]dto.GroupCourseResponse, 0, len(response.GroupCourses))
+	for _, groupCourse := range response.GroupCourses {
+		groupCourses = append(groupCourses, dto.GroupCourseResponse{
+			Id:       groupCourse.Id,
+			CourseId: groupCourse.CourseId,
+			GroupId:  groupCourse.GroupId,
 		})
 	}
 
-	return c.JSON(http.StatusOK, dto.GroupMemberListResponse{
-		GroupMembers: groupMembers,
+	return c.JSON(http.StatusOK, dto.GroupCourseListResponse{
+		GroupCourses: groupCourses,
 	})
 }
 
-func (h *GroupMemberHandler) ReadAllGroupMembersByGroupId(c echo.Context) error {
+func (h *GroupCourseHandler) ReadAllGroupCoursesByGroupId(c echo.Context) error {
 	groupId := c.Param("id")
 	if groupId == "" {
-		return c.JSON(http.StatusBadRequest, dto.GroupMemberResponse{Error: "invalid request"})
+		return c.JSON(http.StatusBadRequest, dto.GroupCourseResponse{Error: "invalid request"})
 	}
 
 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()
 
-	response, err := h.userClient.ReadAllGroupMembersByGroupId(ctx, groupId)
+	response, err := h.courseClient.ReadAllGroupCoursesByGroupId(ctx, groupId)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, dto.GroupMemberResponse{Error: err.Error()})
+		return c.JSON(http.StatusInternalServerError, dto.GroupCourseResponse{Error: err.Error()})
 	}
 
-	groupMembers := make([]dto.GroupMemberResponse, 0, len(response.GroupMembers))
-	for _, groupMember := range response.GroupMembers {
-		groupMembers = append(groupMembers, dto.GroupMemberResponse{
-			Id:      groupMember.Id,
-			UserId:  groupMember.UserId,
-			GroupId: groupMember.GroupId,
+	groupCourses := make([]dto.GroupCourseResponse, 0, len(response.GroupCourses))
+	for _, groupCourse := range response.GroupCourses {
+		groupCourses = append(groupCourses, dto.GroupCourseResponse{
+			Id:       groupCourse.Id,
+			CourseId: groupCourse.CourseId,
+			GroupId:  groupCourse.GroupId,
 		})
 	}
 
-	return c.JSON(http.StatusOK, dto.GroupMemberListResponse{
-		GroupMembers: groupMembers,
+	return c.JSON(http.StatusOK, dto.GroupCourseListResponse{
+		GroupCourses: groupCourses,
 	})
 }
 
-func (h *GroupMemberHandler) DeleteGroupMember(c echo.Context) error {
+func (h *GroupCourseHandler) DeleteGroupCourse(c echo.Context) error {
 	id := c.Param("id")
 	if id == "" {
-		return c.JSON(http.StatusBadRequest, dto.GroupMemberResponse{Error: "invalid request"})
+		return c.JSON(http.StatusBadRequest, dto.GroupCourseResponse{Error: "invalid request"})
 	}
 
 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()
-	_, err := h.userClient.DeleteGroupMember(ctx, id)
+	_, err := h.courseClient.DeleteGroupCourse(ctx, id)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, dto.GroupMemberResponse{Error: err.Error()})
+		return c.JSON(http.StatusInternalServerError, dto.GroupCourseResponse{Error: err.Error()})
 	}
 
 	return c.JSON(http.StatusNoContent, nil)

@@ -17,8 +17,16 @@ func (c *CourseClient) CreateTask(
 	switch taskType {
 	case "TEXT_INPUT":
 		tType = taskservicepb.TaskType_TASK_TYPE_TEXT_INPUT
+	case "text_answer":
+		tType = taskservicepb.TaskType_TASK_TYPE_TEXT_INPUT
+
 	case "CHOICE":
 		tType = taskservicepb.TaskType_TASK_TYPE_CHOICE
+	case "single_choice":
+		tType = taskservicepb.TaskType_TASK_TYPE_CHOICE
+	case "multiple_choice":
+		tType = taskservicepb.TaskType_TASK_TYPE_CHOICE
+
 	default:
 		return nil, errs.ErrInvalidTaskType
 	}

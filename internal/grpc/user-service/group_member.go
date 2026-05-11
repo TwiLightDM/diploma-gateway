@@ -6,9 +6,9 @@ import (
 	"github.com/TwiLightDM/diploma-user-service/proto/groupmemberservicepb"
 )
 
-func (c *UserClient) CreateGroupMember(ctx context.Context, userId, groupId string) (*groupmemberservicepb.CreateGroupMemberResponse, error) {
+func (c *UserClient) CreateGroupMember(ctx context.Context, email, groupId string) (*groupmemberservicepb.CreateGroupMemberResponse, error) {
 	return c.groupMember.CreateGroupMember(ctx, &groupmemberservicepb.CreateGroupMemberRequest{
-		UserId:  userId,
+		Email:   email,
 		GroupId: groupId,
 	})
 }

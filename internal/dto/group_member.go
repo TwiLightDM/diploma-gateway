@@ -3,6 +3,7 @@ package dto
 type GroupMemberRequest struct {
 	GroupId string `json:"group_id"`
 	UserId  string `json:"user_id"`
+	Email   string `json:"email"`
 }
 
 type GroupMemberResponse struct {
