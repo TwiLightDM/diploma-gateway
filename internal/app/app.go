@@ -84,7 +84,7 @@ func Run(cfg *config.Config) error {
 
 	go func() {
 		log.Printf("Gateway started on :%s", cfg.GatewayPort)
-		if err := server.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
+		if err = server.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
 			log.Fatalf("HTTP server error: %v", err)
 		}
 	}()
@@ -95,7 +95,7 @@ func Run(cfg *config.Config) error {
 	shutdownCtx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	if err := server.Shutdown(shutdownCtx); err != nil {
+	if err = server.Shutdown(shutdownCtx); err != nil {
 		return err
 	}
 
@@ -138,6 +138,7 @@ func registerRoutes(e *echo.Echo,
 
 	groupMembers := e.Group("/group-members", authMiddleware)
 	groupMembers.POST("", groupMemberHandler.CreateGroupMember)
+	groupMembers.GET("", groupMemberHandler.ReadAllGroupMembersByUserId)
 	groupMembers.GET("/:id", groupMemberHandler.ReadAllGroupMembersByGroupId)
 	groupMembers.DELETE("/:id", groupMemberHandler.DeleteGroupMember)
 
