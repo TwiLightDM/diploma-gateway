@@ -185,8 +185,10 @@ func registerRoutes(e *echo.Echo,
 
 	taskAttempts := e.Group("/task-attempts", authMiddleware)
 	taskAttempts.POST("", taskAttemptHandler.SubmitTaskAttempt)
-	taskAttempts.GET("/courses/:course_id", taskAttemptHandler.ReadAllTaskAttemptsByYourIdAndCourseId)
-	taskAttempts.GET("/modules/:module_id", taskAttemptHandler.ReadAllTaskAttemptsByYourIdAndModuleId)
+	taskAttempts.GET("/courses/:course_id/my", taskAttemptHandler.ReadAllTaskAttemptsByYourIdAndCourseId)
+	taskAttempts.GET("/modules/:module_id/my", taskAttemptHandler.ReadAllTaskAttemptsByYourIdAndModuleId)
+	taskAttempts.GET("/courses/:course_id", taskAttemptHandler.ReadAllTaskAttemptsByCourseId)
+	taskAttempts.GET("/modules/:module_id", taskAttemptHandler.ReadAllTaskAttemptsByModuleId)
 	taskAttempts.GET("/users/:user_id/courses/:course_id", taskAttemptHandler.ReadAllTaskAttemptsByUserIdAndCourseId)
 	taskAttempts.GET("/users/:user_id/modules/:module_id", taskAttemptHandler.ReadAllTaskAttemptsByUserIdAndModuleId)
 	taskAttempts.GET("/:id", taskAttemptHandler.ReadTaskAttempt)

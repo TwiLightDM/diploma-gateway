@@ -8,9 +8,7 @@ import (
 
 func (c *CourseClient) SubmitTaskAttempt(
 	ctx context.Context,
-	userId,
-	courseId,
-	moduleId string,
+	userId, courseId, moduleId string,
 	answers []*taskattemptservicepb.TaskAttemptAnswer,
 ) (*taskattemptservicepb.SubmitTaskAttemptResponse, error) {
 	return c.taskAttempt.SubmitTaskAttempt(ctx, &taskattemptservicepb.SubmitTaskAttemptRequest{
@@ -37,6 +35,18 @@ func (c *CourseClient) ReadAllTaskAttemptsByUserIdAndModuleId(ctx context.Contex
 func (c *CourseClient) ReadAllTaskAttemptsByUserIdAndCourseId(ctx context.Context, userId, courseId string) (*taskattemptservicepb.ReadAllTaskAttemptsByUserIdAndCourseIdResponse, error) {
 	return c.taskAttempt.ReadAllTaskAttemptsByUserIdAndCourseId(ctx, &taskattemptservicepb.ReadAllTaskAttemptsByUserIdAndCourseIdRequest{
 		UserId:   userId,
+		CourseId: courseId,
+	})
+}
+
+func (c *CourseClient) ReadAllTaskAttemptsByModuleId(ctx context.Context, moduleId string) (*taskattemptservicepb.ReadAllTaskAttemptsByModuleIdResponse, error) {
+	return c.taskAttempt.ReadAllTaskAttemptsByModuleId(ctx, &taskattemptservicepb.ReadAllTaskAttemptsByModuleIdRequest{
+		ModuleId: moduleId,
+	})
+}
+
+func (c *CourseClient) ReadAllTaskAttemptsByCourseId(ctx context.Context, courseId string) (*taskattemptservicepb.ReadAllTaskAttemptsByCourseIdResponse, error) {
+	return c.taskAttempt.ReadAllTaskAttemptsByCourseId(ctx, &taskattemptservicepb.ReadAllTaskAttemptsByCourseIdRequest{
 		CourseId: courseId,
 	})
 }

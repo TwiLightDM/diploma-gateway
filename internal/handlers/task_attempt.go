@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 	"time"
 
@@ -167,7 +166,7 @@ func (h *TaskAttemptHandler) ReadAllTaskAttemptsByYourIdAndCourseId(c echo.Conte
 	if userId == "" {
 		return c.JSON(http.StatusBadRequest, dto.ErrorResponse{Error: "invalid request"})
 	}
-	fmt.Println(userId)
+
 	courseId := c.Param("course_id")
 	if courseId == "" {
 		return c.JSON(http.StatusBadRequest, dto.ErrorResponse{Error: "invalid request"})
@@ -177,6 +176,56 @@ func (h *TaskAttemptHandler) ReadAllTaskAttemptsByYourIdAndCourseId(c echo.Conte
 	defer cancel()
 
 	response, err := h.courseClient.ReadAllTaskAttemptsByUserIdAndCourseId(ctx, userId, courseId)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, dto.ErrorResponse{Error: err.Error()})
+	}
+
+	taskAttempts := make([]dto.TaskAttemptResponse, 0, len(response.TaskAttempts))
+	for _, taskAttempt := range response.TaskAttempts {
+		taskAttempts = append(taskAttempts, mapTaskAttemptResponse(taskAttempt))
+	}
+
+	return c.JSON(http.StatusOK, dto.TaskAttemptListResponse{
+		TaskAttempts: taskAttempts,
+	},
+	)
+}
+
+func (h *TaskAttemptHandler) ReadAllTaskAttemptsByModuleId(c echo.Context) error {
+	moduleId := c.Param("module_id")
+	if moduleId == "" {
+		return c.JSON(http.StatusBadRequest, dto.ErrorResponse{Error: "invalid request"})
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
+	defer cancel()
+
+	response, err := h.courseClient.ReadAllTaskAttemptsByModuleId(ctx, moduleId)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, dto.ErrorResponse{Error: err.Error()})
+	}
+
+	taskAttempts := make([]dto.TaskAttemptResponse, 0, len(response.TaskAttempts))
+	for _, taskAttempt := range response.TaskAttempts {
+		taskAttempts = append(taskAttempts, mapTaskAttemptResponse(taskAttempt))
+	}
+
+	return c.JSON(http.StatusOK, dto.TaskAttemptListResponse{
+		TaskAttempts: taskAttempts,
+	},
+	)
+}
+
+func (h *TaskAttemptHandler) ReadAllTaskAttemptsByCourseId(c echo.Context) error {
+	courseId := c.Param("course_id")
+	if courseId == "" {
+		return c.JSON(http.StatusBadRequest, dto.ErrorResponse{Error: "invalid request"})
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
+	defer cancel()
+
+	response, err := h.courseClient.ReadAllTaskAttemptsByCourseId(ctx, courseId)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, dto.ErrorResponse{Error: err.Error()})
 	}
