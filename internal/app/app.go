@@ -49,6 +49,10 @@ func Run(cfg *config.Config) error {
 	groupCourseHandler := handlers.NewGroupCourseHandler(courseClient)
 	taskHandler := handlers.NewTaskHandler(courseClient)
 	taskAttemptHandler := handlers.NewTaskAttemptHandler(courseClient)
+	lessonProgressHandler := handlers.NewLessonProgressHandler(courseClient)
+	completedCourseHandler := handlers.NewCompletedCourseHandler(courseClient)
+	completedModuleHandler := handlers.NewCompletedModuleHandler(courseClient)
+	completedTheoryCourseHandler := handlers.NewCompletedTheoryCourseHandler(courseClient)
 
 	defer func() {
 		log.Println("Closing gRPC connection to user service")
@@ -68,6 +72,10 @@ func Run(cfg *config.Config) error {
 		groupCourseHandler,
 		taskHandler,
 		taskAttemptHandler,
+		lessonProgressHandler,
+		completedCourseHandler,
+		completedModuleHandler,
+		completedTheoryCourseHandler,
 	)
 
 	server := &http.Server{
@@ -115,6 +123,10 @@ func registerRoutes(e *echo.Echo,
 	groupCourseHandler *handlers.GroupCourseHandler,
 	taskHandler *handlers.TaskHandler,
 	taskAttemptHandler *handlers.TaskAttemptHandler,
+	lessonProgressHandler *handlers.LessonProgressHandler,
+	completedCourseHandler *handlers.CompletedCourseHandler,
+	completedModuleHandler *handlers.CompletedModuleHandler,
+	completedTheoryCourseHandler *handlers.CompletedTheoryCourseHandler,
 ) {
 	public := e.Group("/auth")
 	public.POST("/login", userHandler.Login)
@@ -192,4 +204,35 @@ func registerRoutes(e *echo.Echo,
 	taskAttempts.GET("/users/:user_id/courses/:course_id", taskAttemptHandler.ReadAllTaskAttemptsByUserIdAndCourseId)
 	taskAttempts.GET("/users/:user_id/modules/:module_id", taskAttemptHandler.ReadAllTaskAttemptsByUserIdAndModuleId)
 	taskAttempts.GET("/:id", taskAttemptHandler.ReadTaskAttempt)
+
+	lessonProgress := e.Group("/lesson-progresses", authMiddleware)
+	lessonProgress.POST("", lessonProgressHandler.CreateLessonProgress)
+	lessonProgress.GET("", lessonProgressHandler.ReadLessonProgressByUserId)
+	lessonProgress.GET("/check", lessonProgressHandler.ReadLessonProgressByUserIdAndLessonId)
+
+	courseProgress := e.Group("/progresses", authMiddleware)
+	courseProgress.GET("/courses/:courseId", lessonProgressHandler.ReadCourseProgress)
+	courseProgress.GET("/courses/:courseId/statistics", lessonProgressHandler.ReadCourseStatistics)
+
+	moduleProgress := e.Group("/progresses", authMiddleware)
+	moduleProgress.GET("/modules/:moduleId", lessonProgressHandler.ReadModuleProgress)
+	moduleProgress.GET("/modules/:moduleId/statistics", lessonProgressHandler.ReadModuleStatistics)
+
+	completedCourse := e.Group("/completed-courses", authMiddleware)
+	completedCourse.POST("", completedCourseHandler.CreateCompletedCourse)
+	completedCourse.GET("/my", completedCourseHandler.ReadAllCompletedCoursesByUserId)
+	completedCourse.GET("/courses/:courseId", completedCourseHandler.ReadAllCompletedCoursesByCourseId)
+	completedCourse.GET("/courses/:courseId/my", completedCourseHandler.ReadCompletedCourseByUserIdAndCourseId)
+
+	completedModule := e.Group("/completed-modules", authMiddleware)
+	completedModule.POST("", completedCourseHandler.CreateCompletedCourse)
+	completedModule.GET("/my", completedModuleHandler.ReadAllCompletedModulesByUserId)
+	completedModule.GET("/modules/:moduleId", completedModuleHandler.ReadAllCompletedModulesByModuleId)
+	completedModule.GET("/modules/:moduleId/my", completedModuleHandler.ReadCompletedModuleByUserIdAndModuleId)
+
+	completedTheoryCourse := e.Group("/completed-theory-courses", authMiddleware)
+	completedTheoryCourse.POST("", completedTheoryCourseHandler.CreateCompletedTheoryCourse)
+	completedTheoryCourse.GET("/my", completedTheoryCourseHandler.ReadAllCompletedTheoryCoursesByUserId)
+	completedTheoryCourse.GET("/courses/:courseId", completedTheoryCourseHandler.ReadAllCompletedTheoryCoursesByCourseId)
+	completedTheoryCourse.GET("/courses/:courseId/my", completedTheoryCourseHandler.ReadCompletedTheoryCourseByUserIdAndCourseId)
 }

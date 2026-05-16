@@ -3,16 +3,17 @@ module github.com/TwiLightDM/diploma-gateway
 go 1.26.2
 
 require (
-	github.com/TwiLightDM/diploma-course-service v0.0.0-20260513171516-72c2fb724f2f
+	github.com/TwiLightDM/diploma-course-service v0.0.0-20260516155321-7a1446e90930
 	github.com/TwiLightDM/diploma-user-service v0.0.0-20260511165642-53a315827758
 	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/golang-migrate/migrate/v4 v4.19.1
 	github.com/joho/godotenv v1.5.1
 	github.com/labstack/echo/v4 v4.15.2
-	google.golang.org/grpc v1.81.0
+	google.golang.org/grpc v1.81.1
 )
 
 require (
+	github.com/cespare/xxhash/v2 v2.3.0 // indirect
 	github.com/google/uuid v1.6.0 // indirect
 	github.com/labstack/gommon v0.5.0 // indirect
 	github.com/lib/pq v1.12.3 // indirect
