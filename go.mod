@@ -3,7 +3,7 @@ module github.com/TwiLightDM/diploma-gateway
 go 1.26.2
 
 require (
-	github.com/TwiLightDM/diploma-course-service v0.0.0-20260516155321-7a1446e90930
+	github.com/TwiLightDM/diploma-course-service v0.0.0-20260517120058-b4fe02c70731
 	github.com/TwiLightDM/diploma-user-service v0.0.0-20260511165642-53a315827758
 	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/golang-migrate/migrate/v4 v4.19.1

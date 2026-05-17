@@ -11,5 +11,5 @@ type CompletedModuleResponse struct {
 }
 
 type CompletedModuleListResponse struct {
-	CompletedModule []CompletedModuleResponse `json:"completed_modules"`
+	CompletedModules []CompletedModuleResponse `json:"completed_modules"`
 }

@@ -24,7 +24,7 @@ import (
 func Run(cfg *config.Config) error {
 	err := postgres.RunMigrations(cfg.Postgres.Host, cfg.Postgres.Port, cfg.Postgres.Username, cfg.Postgres.Password, cfg.Postgres.Database)
 	if err != nil {
-		return err
+		log.Printf("failed to run migrations: %v", err)
 	}
 
 	e := echo.New()
@@ -162,6 +162,7 @@ func registerRoutes(e *echo.Echo,
 	courses := e.Group("/courses", authMiddleware)
 	courses.POST("", courseHandler.CreateCourse)
 	courses.GET("", courseHandler.ReadAllCourses)
+	courses.GET("/available", courseHandler.ReadAllAvailableCourses)
 	courses.GET("/my", courseHandler.ReadAllCoursesByOwnerId)
 	courses.GET("/:id", courseHandler.ReadCourse)
 	courses.PATCH("/:id", courseHandler.UpdateCourse)
@@ -208,7 +209,7 @@ func registerRoutes(e *echo.Echo,
 	lessonProgress := e.Group("/lesson-progresses", authMiddleware)
 	lessonProgress.POST("", lessonProgressHandler.CreateLessonProgress)
 	lessonProgress.GET("", lessonProgressHandler.ReadLessonProgressByUserId)
-	lessonProgress.GET("/check", lessonProgressHandler.ReadLessonProgressByUserIdAndLessonId)
+	lessonProgress.GET("/lessons/:lessonId", lessonProgressHandler.ReadLessonProgressByUserIdAndLessonId)
 
 	courseProgress := e.Group("/progresses", authMiddleware)
 	courseProgress.GET("/courses/:courseId", lessonProgressHandler.ReadCourseProgress)
@@ -222,17 +223,14 @@ func registerRoutes(e *echo.Echo,
 	completedCourse.POST("", completedCourseHandler.CreateCompletedCourse)
 	completedCourse.GET("/my", completedCourseHandler.ReadAllCompletedCoursesByUserId)
 	completedCourse.GET("/courses/:courseId", completedCourseHandler.ReadAllCompletedCoursesByCourseId)
-	completedCourse.GET("/courses/:courseId/my", completedCourseHandler.ReadCompletedCourseByUserIdAndCourseId)
 
 	completedModule := e.Group("/completed-modules", authMiddleware)
-	completedModule.POST("", completedCourseHandler.CreateCompletedCourse)
+	completedModule.POST("", completedModuleHandler.CreateCompletedModule)
 	completedModule.GET("/my", completedModuleHandler.ReadAllCompletedModulesByUserId)
 	completedModule.GET("/modules/:moduleId", completedModuleHandler.ReadAllCompletedModulesByModuleId)
-	completedModule.GET("/modules/:moduleId/my", completedModuleHandler.ReadCompletedModuleByUserIdAndModuleId)
 
 	completedTheoryCourse := e.Group("/completed-theory-courses", authMiddleware)
 	completedTheoryCourse.POST("", completedTheoryCourseHandler.CreateCompletedTheoryCourse)
 	completedTheoryCourse.GET("/my", completedTheoryCourseHandler.ReadAllCompletedTheoryCoursesByUserId)
 	completedTheoryCourse.GET("/courses/:courseId", completedTheoryCourseHandler.ReadAllCompletedTheoryCoursesByCourseId)
-	completedTheoryCourse.GET("/courses/:courseId/my", completedTheoryCourseHandler.ReadCompletedTheoryCourseByUserIdAndCourseId)
 }

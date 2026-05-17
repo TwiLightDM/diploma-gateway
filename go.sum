@@ -66,6 +66,8 @@ github.com/TwiLightDM/diploma-course-service v0.0.0-20260514192404-d2a175586894 
 github.com/TwiLightDM/diploma-course-service v0.0.0-20260514192404-d2a175586894/go.mod h1:/mjnGdJJ9yxS4JYjtmT6d3a5YaU9Txscn9WMBhX6n5g=
 github.com/TwiLightDM/diploma-course-service v0.0.0-20260516155321-7a1446e90930 h1:IMJE3vucqbfsCKRVhoDBFYSZmqd6d13OI7+3iJqhVZU=
 github.com/TwiLightDM/diploma-course-service v0.0.0-20260516155321-7a1446e90930/go.mod h1:/mjnGdJJ9yxS4JYjtmT6d3a5YaU9Txscn9WMBhX6n5g=
+github.com/TwiLightDM/diploma-course-service v0.0.0-20260517120058-b4fe02c70731 h1:puwZg0oGAxqjnJosAgl1acsrYFBhDSA4oRO6W+awac8=
+github.com/TwiLightDM/diploma-course-service v0.0.0-20260517120058-b4fe02c70731/go.mod h1:/mjnGdJJ9yxS4JYjtmT6d3a5YaU9Txscn9WMBhX6n5g=
 github.com/TwiLightDM/diploma-user-service v0.0.0-20260503155125-58ee7f2b8022 h1:3fW2ux9S0cbxpKyvRzS812/0HVxpPb+einvMPLqlTzs=
 github.com/TwiLightDM/diploma-user-service v0.0.0-20260503155125-58ee7f2b8022/go.mod h1:xR1SoK2ubIMNfOlyD36kUIyBGvaOxxogNC0vfGWE4wA=
 github.com/TwiLightDM/diploma-user-service v0.0.0-20260511163408-02ed7fd4c33c h1:gOW8kjTIJtZDi1R1Os/C/obvE36WHPfKys1iL49KDTM=

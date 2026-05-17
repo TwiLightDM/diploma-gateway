@@ -25,6 +25,12 @@ func (c *CourseClient) ReadAllCourses(ctx context.Context) (*courseservicepb.Rea
 	return c.course.ReadAllCourses(ctx, &courseservicepb.ReadAllCoursesRequest{})
 }
 
+func (c *CourseClient) ReadAllAvailableCourses(ctx context.Context, userId string) (*courseservicepb.ReadAllAvailableCoursesResponse, error) {
+	return c.course.ReadAllAvailableCourses(ctx, &courseservicepb.ReadAllAvailableCoursesRequest{
+		UserId: userId,
+	})
+}
+
 func (c *CourseClient) ReadAllCoursesByOwnerId(ctx context.Context, ownerId string) (*courseservicepb.ReadAllCoursesByOwnerIdResponse, error) {
 	return c.course.ReadAllCoursesByOwnerId(ctx, &courseservicepb.ReadAllCoursesByOwnerIdRequest{
 		OwnerId: ownerId,

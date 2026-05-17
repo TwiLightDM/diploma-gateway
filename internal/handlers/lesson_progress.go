@@ -87,7 +87,7 @@ func (h *LessonProgressHandler) ReadLessonProgressByUserId(c echo.Context) error
 }
 
 func (h *LessonProgressHandler) ReadLessonProgressByUserIdAndLessonId(c echo.Context) error {
-	lessonId := c.QueryParam("lesson_id")
+	lessonId := c.Param("lessonId")
 	userId := c.Get("user_id").(string)
 
 	if lessonId == "" {

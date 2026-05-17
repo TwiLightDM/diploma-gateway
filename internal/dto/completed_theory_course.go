@@ -11,5 +11,5 @@ type CompletedTheoryCourseResponse struct {
 }
 
 type CompletedTheoryCourseListResponse struct {
-	CompletedTheoryCourse []CompletedTheoryCourseResponse `json:"completed_theory_courses"`
+	CompletedTheoryCourses []CompletedTheoryCourseResponse `json:"completed_theory_courses"`
 }

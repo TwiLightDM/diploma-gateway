@@ -105,7 +105,7 @@ func (h *CompletedCourseHandler) ReadAllCompletedCoursesByUserId(c echo.Context)
 	}
 
 	return c.JSON(http.StatusOK, dto.CompletedCourseListResponse{
-		CompletedCourse: completedCourses,
+		CompletedCourses: completedCourses,
 	})
 }
 
@@ -131,6 +131,6 @@ func (h *CompletedCourseHandler) ReadAllCompletedCoursesByCourseId(c echo.Contex
 	}
 
 	return c.JSON(http.StatusOK, dto.CompletedCourseListResponse{
-		CompletedCourse: completedCourses,
+		CompletedCourses: completedCourses,
 	})
 }

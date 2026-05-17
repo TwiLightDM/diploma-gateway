@@ -105,7 +105,7 @@ func (h *CompletedModuleHandler) ReadAllCompletedModulesByUserId(c echo.Context)
 	}
 
 	return c.JSON(http.StatusOK, dto.CompletedModuleListResponse{
-		CompletedModule: completedModules,
+		CompletedModules: completedModules,
 	})
 }
 
@@ -131,6 +131,6 @@ func (h *CompletedModuleHandler) ReadAllCompletedModulesByModuleId(c echo.Contex
 	}
 
 	return c.JSON(http.StatusOK, dto.CompletedModuleListResponse{
-		CompletedModule: completedModules,
+		CompletedModules: completedModules,
 	})
 }

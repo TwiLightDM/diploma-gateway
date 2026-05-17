@@ -105,7 +105,7 @@ func (h *CompletedTheoryCourseHandler) ReadAllCompletedTheoryCoursesByUserId(c e
 	}
 
 	return c.JSON(http.StatusOK, dto.CompletedTheoryCourseListResponse{
-		CompletedTheoryCourse: completedTheoryCourses,
+		CompletedTheoryCourses: completedTheoryCourses,
 	})
 }
 
@@ -131,6 +131,6 @@ func (h *CompletedTheoryCourseHandler) ReadAllCompletedTheoryCoursesByCourseId(c
 	}
 
 	return c.JSON(http.StatusOK, dto.CompletedTheoryCourseListResponse{
-		CompletedTheoryCourse: completedTheoryCourses,
+		CompletedTheoryCourses: completedTheoryCourses,
 	})
 }

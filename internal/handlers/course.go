@@ -107,6 +107,39 @@ func (h *CourseHandler) ReadAllCourses(c echo.Context) error {
 	})
 }
 
+func (h *CourseHandler) ReadAllAvailableCourses(c echo.Context) error {
+	userId := c.Get("user_id").(string)
+	if userId == "" {
+		return c.JSON(http.StatusBadRequest, dto.ErrorResponse{Error: "invalid request"})
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
+	defer cancel()
+
+	response, err := h.courseClient.ReadAllAvailableCourses(ctx, userId)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, dto.ErrorResponse{Error: err.Error()})
+	}
+
+	courses := make([]dto.CourseResponse, 0, len(response.Courses))
+	for _, course := range response.Courses {
+		courses = append(courses, dto.CourseResponse{
+			Id:              course.Id,
+			Title:           course.Title,
+			Description:     course.Description,
+			AccessType:      course.AccessType,
+			PublishedAt:     course.PublishedAt,
+			OwnerId:         course.OwnerId,
+			AmountOfModules: int(course.AmountOfModules),
+			AmountOfLessons: int(course.AmountOfLessons),
+		})
+	}
+
+	return c.JSON(http.StatusOK, dto.CourseListResponse{
+		Courses: courses,
+	})
+}
+
 func (h *CourseHandler) ReadAllCoursesByOwnerId(c echo.Context) error {
 	ownerId := c.Get("user_id").(string)
 	if ownerId == "" {
