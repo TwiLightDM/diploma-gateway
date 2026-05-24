@@ -128,6 +128,7 @@ func (h *LessonHandler) UpdateLesson(c echo.Context) error {
 		Id:          response.Lesson.Id,
 		Title:       response.Lesson.Title,
 		Description: response.Lesson.Description,
+		Content:     response.Lesson.Content,
 		Position:    response.Lesson.Position,
 		ModuleId:    response.Lesson.ModuleId,
 	})
