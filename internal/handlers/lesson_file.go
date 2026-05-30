@@ -19,6 +19,18 @@ func NewLessonFileHandler(courseClient *course_service.CourseClient) *LessonFile
 	return &LessonFileHandler{courseClient: courseClient}
 }
 
+// UploadFile
+// @Summary Загрузить файл урока
+// @Tags Lesson Files
+// @Accept multipart/form-data
+// @Produce json
+// @Param lesson_id formData string true "Lesson ID"
+// @Param file formData file true "Файл"
+// @Success 200 {object} dto.LessonFileResponse
+// @Failure 400 {object} dto.ErrorResponse
+// @Failure 500 {object} dto.ErrorResponse
+// @Security BearerAuth
+// @Router /lessons/files [post]
 func (h *LessonFileHandler) UploadFile(c echo.Context) error {
 	file, header, err := c.Request().FormFile("file")
 	if err != nil {
@@ -54,6 +66,16 @@ func (h *LessonFileHandler) UploadFile(c echo.Context) error {
 	})
 }
 
+// GetFiles
+// @Summary Получить файлы урока
+// @Tags Lesson Files
+// @Produce json
+// @Param lesson_id path string true "Lesson ID"
+// @Success 200 {object} dto.LessonFileListResponse
+// @Failure 400 {object} dto.ErrorResponse
+// @Failure 500 {object} dto.ErrorResponse
+// @Security BearerAuth
+// @Router /lessons/files/{lesson_id} [get]
 func (h *LessonFileHandler) GetFiles(c echo.Context) error {
 	lessonId := c.Param("lesson_id")
 	if lessonId == "" {
@@ -82,6 +104,18 @@ func (h *LessonFileHandler) GetFiles(c echo.Context) error {
 	})
 }
 
+// DeleteFile
+// @Summary Удалить файл урока
+// @Tags Lesson Files
+// @Accept json
+// @Produce json
+// @Param id path string true "File ID"
+// @Param request body dto.LessonFileRequest true "Object Name"
+// @Success 204
+// @Failure 400 {object} dto.ErrorResponse
+// @Failure 500 {object} dto.ErrorResponse
+// @Security BearerAuth
+// @Router /lessons/files/{id} [delete]
 func (h *LessonFileHandler) DeleteFile(c echo.Context) error {
 	var request dto.LessonFileRequest
 	if err := c.Bind(&request); err != nil {

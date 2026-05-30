@@ -18,6 +18,17 @@ func NewGroupHandler(userClient *user_service.UserClient) *GroupHandler {
 	return &GroupHandler{userClient: userClient}
 }
 
+// CreateGroup
+// @Summary Создать группу
+// @Tags Groups
+// @Accept json
+// @Produce json
+// @Param request body dto.GroupRequest true "Данные группы"
+// @Success 200 {object} dto.GroupResponse
+// @Failure 400 {object} dto.ErrorResponse
+// @Failure 500 {object} dto.ErrorResponse
+// @Security BearerAuth
+// @Router /groups [post]
 func (h *GroupHandler) CreateGroup(c echo.Context) error {
 	var request dto.GroupRequest
 	if err := c.Bind(&request); err != nil {
@@ -40,6 +51,16 @@ func (h *GroupHandler) CreateGroup(c echo.Context) error {
 	})
 }
 
+// ReadGroup
+// @Summary Получить группу
+// @Tags Groups
+// @Produce json
+// @Param id path string true "Group ID"
+// @Success 200 {object} dto.GroupResponse
+// @Failure 400 {object} dto.ErrorResponse
+// @Failure 500 {object} dto.ErrorResponse
+// @Security BearerAuth
+// @Router /groups/{id} [get]
 func (h *GroupHandler) ReadGroup(c echo.Context) error {
 	id := c.Param("id")
 	if id == "" {
@@ -62,6 +83,14 @@ func (h *GroupHandler) ReadGroup(c echo.Context) error {
 	})
 }
 
+// ReadAllGroupsByOwnerId
+// @Summary Получить мои группы
+// @Tags Groups
+// @Produce json
+// @Success 200 {object} dto.GroupListResponse
+// @Failure 500 {object} dto.ErrorResponse
+// @Security BearerAuth
+// @Router /groups/my [get]
 func (h *GroupHandler) ReadAllGroupsByOwnerId(c echo.Context) error {
 	ownerId := c.Get("user_id").(string)
 	if ownerId == "" {
@@ -91,6 +120,18 @@ func (h *GroupHandler) ReadAllGroupsByOwnerId(c echo.Context) error {
 	})
 }
 
+// UpdateGroup
+// @Summary Обновить группу
+// @Tags Groups
+// @Accept json
+// @Produce json
+// @Param id path string true "Group ID"
+// @Param request body dto.GroupRequest true "Новые данные"
+// @Success 200 {object} dto.GroupResponse
+// @Failure 400 {object} dto.ErrorResponse
+// @Failure 500 {object} dto.ErrorResponse
+// @Security BearerAuth
+// @Router /groups/{id} [patch]
 func (h *GroupHandler) UpdateGroup(c echo.Context) error {
 	var request dto.GroupRequest
 	if err := c.Bind(&request); err != nil {
@@ -118,6 +159,16 @@ func (h *GroupHandler) UpdateGroup(c echo.Context) error {
 	})
 }
 
+// DeleteGroup
+// @Summary Удалить группу
+// @Tags Groups
+// @Produce json
+// @Param id path string true "Group ID"
+// @Success 204
+// @Failure 400 {object} dto.ErrorResponse
+// @Failure 500 {object} dto.ErrorResponse
+// @Security BearerAuth
+// @Router /groups/{id} [delete]
 func (h *GroupHandler) DeleteGroup(c echo.Context) error {
 	id := c.Param("id")
 	if id == "" {

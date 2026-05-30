@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/TwiLightDM/diploma-gateway/internal/config"
+	_ "github.com/TwiLightDM/diploma-gateway/internal/docs"
 	"github.com/TwiLightDM/diploma-gateway/internal/grpc/course-service"
 	"github.com/TwiLightDM/diploma-gateway/internal/grpc/user-service"
 	"github.com/TwiLightDM/diploma-gateway/internal/handlers"
@@ -19,6 +20,7 @@ import (
 	"github.com/TwiLightDM/diploma-gateway/package/databases/postgres"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
+	"github.com/swaggo/echo-swagger"
 )
 
 func Run(cfg *config.Config) error {
@@ -128,6 +130,8 @@ func registerRoutes(e *echo.Echo,
 	completedModuleHandler *handlers.CompletedModuleHandler,
 	completedTheoryCourseHandler *handlers.CompletedTheoryCourseHandler,
 ) {
+	e.GET("/swagger/*", echoSwagger.WrapHandler)
+
 	public := e.Group("/auth")
 	public.POST("/login", userHandler.Login)
 	public.POST("/signup", userHandler.SignUp)

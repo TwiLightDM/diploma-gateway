@@ -20,6 +20,17 @@ func NewTaskAttemptHandler(courseClient *course_service.CourseClient) *TaskAttem
 	return &TaskAttemptHandler{courseClient: courseClient}
 }
 
+// SubmitTaskAttempt
+// @Summary Отправить попытку прохождения теста
+// @Tags Task Attempts
+// @Accept json
+// @Produce json
+// @Param request body dto.TaskAttemptRequest true "Ответы пользователя"
+// @Success 200 {object} dto.TaskAttemptResponse
+// @Failure 400 {object} dto.ErrorResponse
+// @Failure 500 {object} dto.ErrorResponse
+// @Security BearerAuth
+// @Router /task-attempts [post]
 func (h *TaskAttemptHandler) SubmitTaskAttempt(c echo.Context) error {
 	var request dto.TaskAttemptRequest
 	if err := c.Bind(&request); err != nil {
@@ -54,6 +65,16 @@ func (h *TaskAttemptHandler) SubmitTaskAttempt(c echo.Context) error {
 	return c.JSON(http.StatusOK, mapTaskAttemptResponse(response.TaskAttempt))
 }
 
+// ReadTaskAttempt
+// @Summary Получить попытку
+// @Tags Task Attempts
+// @Produce json
+// @Param id path string true "Attempt ID"
+// @Success 200 {object} dto.TaskAttemptResponse
+// @Failure 400 {object} dto.ErrorResponse
+// @Failure 500 {object} dto.ErrorResponse
+// @Security BearerAuth
+// @Router /task-attempts/{id} [get]
 func (h *TaskAttemptHandler) ReadTaskAttempt(c echo.Context) error {
 	id := c.Param("id")
 	if id == "" {
@@ -71,6 +92,17 @@ func (h *TaskAttemptHandler) ReadTaskAttempt(c echo.Context) error {
 	return c.JSON(http.StatusOK, mapTaskAttemptResponse(response.TaskAttempt))
 }
 
+// ReadAllTaskAttemptsByUserIdAndModuleId
+// @Summary Получить попытки пользователя по модулю
+// @Tags Task Attempts
+// @Produce json
+// @Param user_id path string true "User ID"
+// @Param module_id path string true "Module ID"
+// @Success 200 {object} dto.TaskAttemptListResponse
+// @Failure 400 {object} dto.ErrorResponse
+// @Failure 500 {object} dto.ErrorResponse
+// @Security BearerAuth
+// @Router /task-attempts/users/{user_id}/modules/{module_id} [get]
 func (h *TaskAttemptHandler) ReadAllTaskAttemptsByUserIdAndModuleId(c echo.Context) error {
 	userId := c.Param("user_id")
 	if userId == "" {
@@ -101,6 +133,17 @@ func (h *TaskAttemptHandler) ReadAllTaskAttemptsByUserIdAndModuleId(c echo.Conte
 	)
 }
 
+// ReadAllTaskAttemptsByUserIdAndCourseId
+// @Summary Получить попытки пользователя по курсу
+// @Tags Task Attempts
+// @Produce json
+// @Param user_id path string true "User ID"
+// @Param course_id path string true "Course ID"
+// @Success 200 {object} dto.TaskAttemptListResponse
+// @Failure 400 {object} dto.ErrorResponse
+// @Failure 500 {object} dto.ErrorResponse
+// @Security BearerAuth
+// @Router /task-attempts/users/{user_id}/courses/{course_id} [get]
 func (h *TaskAttemptHandler) ReadAllTaskAttemptsByUserIdAndCourseId(c echo.Context) error {
 	userId := c.Param("user_id")
 	if userId == "" {
@@ -131,6 +174,16 @@ func (h *TaskAttemptHandler) ReadAllTaskAttemptsByUserIdAndCourseId(c echo.Conte
 	)
 }
 
+// ReadAllTaskAttemptsByYourIdAndModuleId
+// @Summary Получить мои попытки по модулю
+// @Tags Task Attempts
+// @Produce json
+// @Param module_id path string true "Module ID"
+// @Success 200 {object} dto.TaskAttemptListResponse
+// @Failure 400 {object} dto.ErrorResponse
+// @Failure 500 {object} dto.ErrorResponse
+// @Security BearerAuth
+// @Router /task-attempts/my/modules/{module_id} [get]
 func (h *TaskAttemptHandler) ReadAllTaskAttemptsByYourIdAndModuleId(c echo.Context) error {
 	userId := c.Get("user_id").(string)
 	if userId == "" {
@@ -161,6 +214,16 @@ func (h *TaskAttemptHandler) ReadAllTaskAttemptsByYourIdAndModuleId(c echo.Conte
 	)
 }
 
+// ReadAllTaskAttemptsByYourIdAndCourseId
+// @Summary Получить мои попытки по курсу
+// @Tags Task Attempts
+// @Produce json
+// @Param course_id path string true "Course ID"
+// @Success 200 {object} dto.TaskAttemptListResponse
+// @Failure 400 {object} dto.ErrorResponse
+// @Failure 500 {object} dto.ErrorResponse
+// @Security BearerAuth
+// @Router /task-attempts/my/courses/{course_id} [get]
 func (h *TaskAttemptHandler) ReadAllTaskAttemptsByYourIdAndCourseId(c echo.Context) error {
 	userId := c.Get("user_id").(string)
 	if userId == "" {
@@ -191,6 +254,16 @@ func (h *TaskAttemptHandler) ReadAllTaskAttemptsByYourIdAndCourseId(c echo.Conte
 	)
 }
 
+// ReadAllTaskAttemptsByModuleId
+// @Summary Получить все попытки по модулю
+// @Tags Task Attempts
+// @Produce json
+// @Param module_id path string true "Module ID"
+// @Success 200 {object} dto.TaskAttemptListResponse
+// @Failure 400 {object} dto.ErrorResponse
+// @Failure 500 {object} dto.ErrorResponse
+// @Security BearerAuth
+// @Router /task-attempts/modules/{module_id} [get]
 func (h *TaskAttemptHandler) ReadAllTaskAttemptsByModuleId(c echo.Context) error {
 	moduleId := c.Param("module_id")
 	if moduleId == "" {
@@ -216,6 +289,16 @@ func (h *TaskAttemptHandler) ReadAllTaskAttemptsByModuleId(c echo.Context) error
 	)
 }
 
+// ReadAllTaskAttemptsByCourseId
+// @Summary Получить все попытки по курсу
+// @Tags Task Attempts
+// @Produce json
+// @Param course_id path string true "Course ID"
+// @Success 200 {object} dto.TaskAttemptListResponse
+// @Failure 400 {object} dto.ErrorResponse
+// @Failure 500 {object} dto.ErrorResponse
+// @Security BearerAuth
+// @Router /task-attempts/courses/{course_id} [get]
 func (h *TaskAttemptHandler) ReadAllTaskAttemptsByCourseId(c echo.Context) error {
 	courseId := c.Param("course_id")
 	if courseId == "" {

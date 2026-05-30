@@ -18,6 +18,16 @@ func NewUserHandler(userClient *user_service.UserClient) *UserHandler {
 	return &UserHandler{userClient: userClient}
 }
 
+// Login
+// @Summary Авторизация пользователя
+// @Tags Auth
+// @Accept json
+// @Produce json
+// @Param request body dto.UserRequest true "Email и пароль"
+// @Success 200 {object} dto.LoginResponse
+// @Failure 400 {object} dto.ErrorResponse
+// @Failure 500 {object} dto.ErrorResponse
+// @Router /auth/login [post]
 func (h *UserHandler) Login(c echo.Context) error {
 	var request dto.UserRequest
 	if err := c.Bind(&request); err != nil {
@@ -38,6 +48,16 @@ func (h *UserHandler) Login(c echo.Context) error {
 	})
 }
 
+// SignUp
+// @Summary Регистрация пользователя
+// @Tags Auth
+// @Accept json
+// @Produce json
+// @Param request body dto.UserRequest true "Данные пользователя"
+// @Success 200 {object} dto.SignUpResponse
+// @Failure 400 {object} dto.ErrorResponse
+// @Failure 500 {object} dto.ErrorResponse
+// @Router /auth/signup [post]
 func (h *UserHandler) SignUp(c echo.Context) error {
 	var request dto.UserRequest
 	if err := c.Bind(&request); err != nil {
@@ -64,6 +84,18 @@ func (h *UserHandler) SignUp(c echo.Context) error {
 	})
 }
 
+// CreateTeacher
+// @Summary Создать преподавателя
+// @Description Создание нового пользователя с ролью teacher
+// @Tags Users
+// @Accept json
+// @Produce json
+// @Param request body dto.UserRequest true "Данные преподавателя"
+// @Success 200 {object} dto.SignUpResponse
+// @Failure 400 {object} dto.ErrorResponse
+// @Failure 500 {object} dto.ErrorResponse
+// @Security BearerAuth
+// @Router /users/teachers [post]
 func (h *UserHandler) CreateTeacher(c echo.Context) error {
 	var request dto.UserRequest
 	if err := c.Bind(&request); err != nil {
@@ -90,6 +122,14 @@ func (h *UserHandler) CreateTeacher(c echo.Context) error {
 	})
 }
 
+// Refresh
+// @Summary Обновить токены
+// @Tags Auth
+// @Produce json
+// @Success 200 {object} dto.LoginResponse
+// @Failure 500 {object} dto.ErrorResponse
+// @Security BearerAuth
+// @Router /auth/refresh [post]
 func (h *UserHandler) Refresh(c echo.Context) error {
 	id := c.Get("user_id").(string)
 	role := c.Get("role").(string)
@@ -108,6 +148,16 @@ func (h *UserHandler) Refresh(c echo.Context) error {
 	})
 }
 
+// ReadUser
+// @Summary Получить пользователя по ID
+// @Tags Users
+// @Produce json
+// @Param id path string true "User ID"
+// @Success 200 {object} dto.UserResponse
+// @Failure 400 {object} dto.ErrorResponse
+// @Failure 500 {object} dto.ErrorResponse
+// @Security BearerAuth
+// @Router /users/{id} [get]
 func (h *UserHandler) ReadUser(c echo.Context) error {
 	id := c.Param("id")
 	if id == "" {
@@ -130,6 +180,16 @@ func (h *UserHandler) ReadUser(c echo.Context) error {
 	})
 }
 
+// ReadAllUser
+// @Summary Получить список пользователей
+// @Description Доступно только администратору
+// @Tags Users
+// @Produce json
+// @Success 200 {object} dto.UserListResponse
+// @Failure 403 {object} dto.ErrorResponse
+// @Failure 500 {object} dto.ErrorResponse
+// @Security BearerAuth
+// @Router /users [get]
 func (h *UserHandler) ReadAllUser(c echo.Context) error {
 	role := c.Get("role").(string)
 	if role != "admin" {
@@ -159,6 +219,15 @@ func (h *UserHandler) ReadAllUser(c echo.Context) error {
 	})
 }
 
+// ReadSelf
+// @Summary Получить информацию о текущем пользователе
+// @Tags Users
+// @Produce json
+// @Success 200 {object} dto.UserResponse
+// @Failure 400 {object} dto.ErrorResponse
+// @Failure 500 {object} dto.ErrorResponse
+// @Security BearerAuth
+// @Router /users/me [get]
 func (h *UserHandler) ReadSelf(c echo.Context) error {
 	id := c.Get("user_id").(string)
 	if id == "" {
@@ -181,6 +250,17 @@ func (h *UserHandler) ReadSelf(c echo.Context) error {
 	})
 }
 
+// UpdateUser
+// @Summary Обновить профиль пользователя
+// @Tags Users
+// @Accept json
+// @Produce json
+// @Param request body dto.UserRequest true "Новые данные пользователя"
+// @Success 200 {object} dto.UserResponse
+// @Failure 400 {object} dto.ErrorResponse
+// @Failure 500 {object} dto.ErrorResponse
+// @Security BearerAuth
+// @Router /users/me [put]
 func (h *UserHandler) UpdateUser(c echo.Context) error {
 	var request dto.UserRequest
 	if err := c.Bind(&request); err != nil {
@@ -208,6 +288,17 @@ func (h *UserHandler) UpdateUser(c echo.Context) error {
 	})
 }
 
+// ChangePassword
+// @Summary Изменить пароль
+// @Tags Users
+// @Accept json
+// @Produce json
+// @Param request body dto.UserRequest true "Новый пароль"
+// @Success 200
+// @Failure 400 {object} dto.ErrorResponse
+// @Failure 500 {object} dto.ErrorResponse
+// @Security BearerAuth
+// @Router /users/me/password [put]
 func (h *UserHandler) ChangePassword(c echo.Context) error {
 	var request dto.UserRequest
 	if err := c.Bind(&request); err != nil {
@@ -230,6 +321,19 @@ func (h *UserHandler) ChangePassword(c echo.Context) error {
 	return c.NoContent(http.StatusOK)
 }
 
+// UpdateUserRole
+// @Summary Изменить роль пользователя
+// @Description Доступно только администратору
+// @Tags Users
+// @Accept json
+// @Produce json
+// @Param request body dto.UserRequest true "ID пользователя и новая роль"
+// @Success 200 {object} dto.UserResponse
+// @Failure 400 {object} dto.ErrorResponse
+// @Failure 403 {object} dto.ErrorResponse
+// @Failure 500 {object} dto.ErrorResponse
+// @Security BearerAuth
+// @Router /users/role [put]
 func (h *UserHandler) UpdateUserRole(c echo.Context) error {
 	var request dto.UserRequest
 	if err := c.Bind(&request); err != nil {

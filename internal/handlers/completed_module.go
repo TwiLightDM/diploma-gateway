@@ -20,6 +20,18 @@ func NewCompletedModuleHandler(client *course_service.CourseClient) *CompletedMo
 	return &CompletedModuleHandler{completedModuleClient: client}
 }
 
+// CreateCompletedModule
+// @Summary Завершить модуль
+// @Tags Completed Modules
+// @Accept json
+// @Produce json
+// @Param request body dto.CompletedModuleRequest true "Module ID"
+// @Success 200 {object} dto.CompletedModuleResponse
+// @Failure 400 {object} dto.ErrorResponse
+// @Failure 409 {object} dto.ErrorResponse
+// @Failure 500 {object} dto.ErrorResponse
+// @Security BearerAuth
+// @Router /completed-modules [post]
 func (h *CompletedModuleHandler) CreateCompletedModule(c echo.Context) error {
 	var request dto.CompletedModuleRequest
 	if err := c.Bind(&request); err != nil {
@@ -59,30 +71,14 @@ func (h *CompletedModuleHandler) CreateCompletedModule(c echo.Context) error {
 	})
 }
 
-func (h *CompletedModuleHandler) ReadCompletedModuleByUserIdAndModuleId(c echo.Context) error {
-	var request dto.CompletedModuleRequest
-	if err := c.Bind(&request); err != nil {
-		return c.JSON(http.StatusBadRequest, dto.ErrorResponse{
-			Error: "invalid request",
-		})
-	}
-
-	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
-	defer cancel()
-
-	response, err := h.completedModuleClient.ReadCompletedModuleByUserIdAndModuleId(ctx, request.UserId, request.ModuleId)
-	if err != nil {
-		return c.JSON(http.StatusInternalServerError, dto.ErrorResponse{
-			Error: err.Error(),
-		})
-	}
-
-	return c.JSON(http.StatusOK, dto.CompletedModuleResponse{
-		UserId:   response.CompletedModule.UserId,
-		ModuleId: response.CompletedModule.ModuleId,
-	})
-}
-
+// ReadAllCompletedModulesByUserId
+// @Summary Получить завершённые модули пользователя
+// @Tags Completed Modules
+// @Produce json
+// @Success 200 {object} dto.CompletedModuleListResponse
+// @Failure 500 {object} dto.ErrorResponse
+// @Security BearerAuth
+// @Router /completed-modules/my [get]
 func (h *CompletedModuleHandler) ReadAllCompletedModulesByUserId(c echo.Context) error {
 	userId := c.Get("user_id").(string)
 
@@ -109,6 +105,15 @@ func (h *CompletedModuleHandler) ReadAllCompletedModulesByUserId(c echo.Context)
 	})
 }
 
+// ReadAllCompletedModulesByModuleId
+// @Summary Получить пользователей завершивших модуль
+// @Tags Completed Modules
+// @Produce json
+// @Param moduleId path string true "Module ID"
+// @Success 200 {object} dto.CompletedModuleListResponse
+// @Failure 500 {object} dto.ErrorResponse
+// @Security BearerAuth
+// @Router /completed-modules/modules/{moduleId} [get]
 func (h *CompletedModuleHandler) ReadAllCompletedModulesByModuleId(c echo.Context) error {
 	courseId := c.Param("courseId")
 
@@ -132,5 +137,29 @@ func (h *CompletedModuleHandler) ReadAllCompletedModulesByModuleId(c echo.Contex
 
 	return c.JSON(http.StatusOK, dto.CompletedModuleListResponse{
 		CompletedModules: completedModules,
+	})
+}
+
+func (h *CompletedModuleHandler) ReadCompletedModuleByUserIdAndModuleId(c echo.Context) error {
+	var request dto.CompletedModuleRequest
+	if err := c.Bind(&request); err != nil {
+		return c.JSON(http.StatusBadRequest, dto.ErrorResponse{
+			Error: "invalid request",
+		})
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
+	defer cancel()
+
+	response, err := h.completedModuleClient.ReadCompletedModuleByUserIdAndModuleId(ctx, request.UserId, request.ModuleId)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, dto.ErrorResponse{
+			Error: err.Error(),
+		})
+	}
+
+	return c.JSON(http.StatusOK, dto.CompletedModuleResponse{
+		UserId:   response.CompletedModule.UserId,
+		ModuleId: response.CompletedModule.ModuleId,
 	})
 }

@@ -20,6 +20,18 @@ func NewCompletedCourseHandler(client *course_service.CourseClient) *CompletedCo
 	return &CompletedCourseHandler{completedCourseClient: client}
 }
 
+// CreateCompletedCourse
+// @Summary Завершить курс
+// @Tags Completed Courses
+// @Accept json
+// @Produce json
+// @Param request body dto.CompletedCourseRequest true "Course ID"
+// @Success 200 {object} dto.CompletedCourseResponse
+// @Failure 400 {object} dto.ErrorResponse
+// @Failure 409 {object} dto.ErrorResponse
+// @Failure 500 {object} dto.ErrorResponse
+// @Security BearerAuth
+// @Router /completed-courses [post]
 func (h *CompletedCourseHandler) CreateCompletedCourse(c echo.Context) error {
 	var request dto.CompletedCourseRequest
 	if err := c.Bind(&request); err != nil {
@@ -59,30 +71,14 @@ func (h *CompletedCourseHandler) CreateCompletedCourse(c echo.Context) error {
 	})
 }
 
-func (h *CompletedCourseHandler) ReadCompletedCourseByUserIdAndCourseId(c echo.Context) error {
-	var request dto.CompletedCourseRequest
-	if err := c.Bind(&request); err != nil {
-		return c.JSON(http.StatusBadRequest, dto.ErrorResponse{
-			Error: "invalid request",
-		})
-	}
-
-	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
-	defer cancel()
-
-	response, err := h.completedCourseClient.ReadCompletedCourseByUserIdAndCourseId(ctx, request.UserId, request.CourseId)
-	if err != nil {
-		return c.JSON(http.StatusInternalServerError, dto.ErrorResponse{
-			Error: err.Error(),
-		})
-	}
-
-	return c.JSON(http.StatusOK, dto.CompletedCourseResponse{
-		UserId:   response.CompletedCourse.UserId,
-		CourseId: response.CompletedCourse.CourseId,
-	})
-}
-
+// ReadAllCompletedCoursesByUserId
+// @Summary Получить завершённые курсы пользователя
+// @Tags Completed Courses
+// @Produce json
+// @Success 200 {object} dto.CompletedCourseListResponse
+// @Failure 500 {object} dto.ErrorResponse
+// @Security BearerAuth
+// @Router /completed-courses/my [get]
 func (h *CompletedCourseHandler) ReadAllCompletedCoursesByUserId(c echo.Context) error {
 	userId := c.Get("user_id").(string)
 
@@ -109,6 +105,15 @@ func (h *CompletedCourseHandler) ReadAllCompletedCoursesByUserId(c echo.Context)
 	})
 }
 
+// ReadAllCompletedCoursesByCourseId
+// @Summary Получить пользователей завершивших курс
+// @Tags Completed Courses
+// @Produce json
+// @Param courseId path string true "Course ID"
+// @Success 200 {object} dto.CompletedCourseListResponse
+// @Failure 500 {object} dto.ErrorResponse
+// @Security BearerAuth
+// @Router /completed-courses/courses/{courseId} [get]
 func (h *CompletedCourseHandler) ReadAllCompletedCoursesByCourseId(c echo.Context) error {
 	courseId := c.Param("courseId")
 
@@ -132,5 +137,29 @@ func (h *CompletedCourseHandler) ReadAllCompletedCoursesByCourseId(c echo.Contex
 
 	return c.JSON(http.StatusOK, dto.CompletedCourseListResponse{
 		CompletedCourses: completedCourses,
+	})
+}
+
+func (h *CompletedCourseHandler) ReadCompletedCourseByUserIdAndCourseId(c echo.Context) error {
+	var request dto.CompletedCourseRequest
+	if err := c.Bind(&request); err != nil {
+		return c.JSON(http.StatusBadRequest, dto.ErrorResponse{
+			Error: "invalid request",
+		})
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
+	defer cancel()
+
+	response, err := h.completedCourseClient.ReadCompletedCourseByUserIdAndCourseId(ctx, request.UserId, request.CourseId)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, dto.ErrorResponse{
+			Error: err.Error(),
+		})
+	}
+
+	return c.JSON(http.StatusOK, dto.CompletedCourseResponse{
+		UserId:   response.CompletedCourse.UserId,
+		CourseId: response.CompletedCourse.CourseId,
 	})
 }

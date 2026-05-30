@@ -24,6 +24,18 @@ func NewTaskHandler(courseClient *course_service.CourseClient) *TaskHandler {
 	return &TaskHandler{courseClient: courseClient}
 }
 
+// CreateTask
+// @Summary Создать задание
+// @Tags Tasks
+// @Accept json
+// @Produce json
+// @Param request body dto.TaskRequest true "Данные задания"
+// @Success 200 {object} dto.TaskResponse
+// @Failure 400 {object} dto.ErrorResponse
+// @Failure 409 {object} dto.ErrorResponse
+// @Failure 500 {object} dto.ErrorResponse
+// @Security BearerAuth
+// @Router /tasks [post]
 func (h *TaskHandler) CreateTask(c echo.Context) error {
 	var request dto.TaskRequest
 
@@ -89,6 +101,16 @@ func (h *TaskHandler) CreateTask(c echo.Context) error {
 	)
 }
 
+// ReadTask
+// @Summary Получить задание по ID
+// @Tags Tasks
+// @Produce json
+// @Param id path string true "Task ID"
+// @Success 200 {object} dto.TaskResponse
+// @Failure 400 {object} dto.ErrorResponse
+// @Failure 500 {object} dto.ErrorResponse
+// @Security BearerAuth
+// @Router /tasks/{id} [get]
 func (h *TaskHandler) ReadTask(c echo.Context) error {
 	id := c.Param("id")
 	if id == "" {
@@ -124,6 +146,16 @@ func (h *TaskHandler) ReadTask(c echo.Context) error {
 	)
 }
 
+// ReadTasksByModuleId
+// @Summary Получить задания модуля
+// @Tags Tasks
+// @Produce json
+// @Param module_id path string true "Module ID"
+// @Success 200 {object} dto.TaskListResponse
+// @Failure 400 {object} dto.ErrorResponse
+// @Failure 500 {object} dto.ErrorResponse
+// @Security BearerAuth
+// @Router /tasks/modules/{module_id} [get]
 func (h *TaskHandler) ReadTasksByModuleId(c echo.Context) error {
 	moduleId := c.Param("module_id")
 	if moduleId == "" {
@@ -167,6 +199,16 @@ func (h *TaskHandler) ReadTasksByModuleId(c echo.Context) error {
 	)
 }
 
+// ReadTasksByCourseId
+// @Summary Получить задания курса
+// @Tags Tasks
+// @Produce json
+// @Param course_id path string true "Course ID"
+// @Success 200 {object} dto.TaskListResponse
+// @Failure 400 {object} dto.ErrorResponse
+// @Failure 500 {object} dto.ErrorResponse
+// @Security BearerAuth
+// @Router /tasks/courses/{course_id} [get]
 func (h *TaskHandler) ReadTasksByCourseId(c echo.Context) error {
 	courseId := c.Param("course_id")
 	if courseId == "" {
@@ -212,6 +254,18 @@ func (h *TaskHandler) ReadTasksByCourseId(c echo.Context) error {
 	)
 }
 
+// UpdateTask
+// @Summary Обновить задание
+// @Tags Tasks
+// @Accept json
+// @Produce json
+// @Param id path string true "Task ID"
+// @Param request body dto.TaskRequest true "Новые данные задания"
+// @Success 200 {object} dto.TaskResponse
+// @Failure 400 {object} dto.ErrorResponse
+// @Failure 500 {object} dto.ErrorResponse
+// @Security BearerAuth
+// @Router /tasks/{id} [put]
 func (h *TaskHandler) UpdateTask(c echo.Context) error {
 	var request dto.TaskRequest
 
@@ -267,6 +321,16 @@ func (h *TaskHandler) UpdateTask(c echo.Context) error {
 	)
 }
 
+// DeleteTask
+// @Summary Удалить задание
+// @Tags Tasks
+// @Produce json
+// @Param id path string true "Task ID"
+// @Success 204
+// @Failure 400 {object} dto.ErrorResponse
+// @Failure 500 {object} dto.ErrorResponse
+// @Security BearerAuth
+// @Router /tasks/{id} [delete]
 func (h *TaskHandler) DeleteTask(c echo.Context) error {
 	id := c.Param("id")
 	if id == "" {

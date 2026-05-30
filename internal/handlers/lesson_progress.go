@@ -20,6 +20,18 @@ func NewLessonProgressHandler(client *course_service.CourseClient) *LessonProgre
 	return &LessonProgressHandler{lessonProgressClient: client}
 }
 
+// CreateLessonProgress
+// @Summary Отметить урок как пройденный
+// @Tags Lesson Progress
+// @Accept json
+// @Produce json
+// @Param request body dto.LessonProgressRequest true "Lesson ID"
+// @Success 200 {object} dto.LessonProgressResponse
+// @Failure 400 {object} dto.ErrorResponse
+// @Failure 409 {object} dto.ErrorResponse
+// @Failure 500 {object} dto.ErrorResponse
+// @Security BearerAuth
+// @Router /lesson-progresses [post]
 func (h *LessonProgressHandler) CreateLessonProgress(c echo.Context) error {
 	var request dto.LessonProgressRequest
 
@@ -60,6 +72,14 @@ func (h *LessonProgressHandler) CreateLessonProgress(c echo.Context) error {
 	})
 }
 
+// ReadLessonProgressByUserId
+// @Summary Получить прогресс пользователя по урокам
+// @Tags Lesson Progress
+// @Produce json
+// @Success 200 {object} dto.LessonProgressListResponse
+// @Failure 500 {object} dto.ErrorResponse
+// @Security BearerAuth
+// @Router /lesson-progresses [get]
 func (h *LessonProgressHandler) ReadLessonProgressByUserId(c echo.Context) error {
 	userId := c.Get("user_id").(string)
 
@@ -86,6 +106,16 @@ func (h *LessonProgressHandler) ReadLessonProgressByUserId(c echo.Context) error
 	})
 }
 
+// ReadLessonProgressByUserIdAndLessonId
+// @Summary Получить прогресс по уроку
+// @Tags Lesson Progress
+// @Produce json
+// @Param lessonId path string true "Lesson ID"
+// @Success 200 {object} dto.LessonProgressResponse
+// @Failure 400 {object} dto.ErrorResponse
+// @Failure 500 {object} dto.ErrorResponse
+// @Security BearerAuth
+// @Router /lesson-progresses/lessons/{lessonId} [get]
 func (h *LessonProgressHandler) ReadLessonProgressByUserIdAndLessonId(c echo.Context) error {
 	lessonId := c.Param("lessonId")
 	userId := c.Get("user_id").(string)
@@ -112,6 +142,15 @@ func (h *LessonProgressHandler) ReadLessonProgressByUserIdAndLessonId(c echo.Con
 	})
 }
 
+// ReadCourseProgress
+// @Summary Получить прогресс курса
+// @Tags Course Progress
+// @Produce json
+// @Param courseId path string true "Course ID"
+// @Success 200 {object} dto.CourseProgressResponse
+// @Failure 500 {object} dto.ErrorResponse
+// @Security BearerAuth
+// @Router /progresses/courses/{courseId} [get]
 func (h *LessonProgressHandler) ReadCourseProgress(c echo.Context) error {
 	courseId := c.Param("courseId")
 	userId := c.Get("user_id").(string)
@@ -135,6 +174,15 @@ func (h *LessonProgressHandler) ReadCourseProgress(c echo.Context) error {
 	})
 }
 
+// ReadCourseStatistics
+// @Summary Получить статистику курса
+// @Tags Course Progress
+// @Produce json
+// @Param courseId path string true "Course ID"
+// @Success 200 {object} dto.CourseStatisticsResponse
+// @Failure 500 {object} dto.ErrorResponse
+// @Security BearerAuth
+// @Router /progresses/courses/{courseId}/statistics [get]
 func (h *LessonProgressHandler) ReadCourseStatistics(c echo.Context) error {
 	courseId := c.Param("courseId")
 
@@ -165,6 +213,15 @@ func (h *LessonProgressHandler) ReadCourseStatistics(c echo.Context) error {
 	})
 }
 
+// ReadModuleProgress
+// @Summary Получить прогресс модуля
+// @Tags Module Progress
+// @Produce json
+// @Param moduleId path string true "Module ID"
+// @Success 200 {object} dto.ModuleProgressResponse
+// @Failure 500 {object} dto.ErrorResponse
+// @Security BearerAuth
+// @Router /progresses/modules/{moduleId} [get]
 func (h *LessonProgressHandler) ReadModuleProgress(c echo.Context) error {
 	moduleId := c.Param("moduleId")
 	userId := c.Get("user_id").(string)
@@ -188,6 +245,15 @@ func (h *LessonProgressHandler) ReadModuleProgress(c echo.Context) error {
 	})
 }
 
+// ReadModuleStatistics
+// @Summary Получить статистику модуля
+// @Tags Module Progress
+// @Produce json
+// @Param moduleId path string true "Module ID"
+// @Success 200 {object} dto.ModuleStatisticsResponse
+// @Failure 500 {object} dto.ErrorResponse
+// @Security BearerAuth
+// @Router /progresses/modules/{moduleId}/statistics [get]
 func (h *LessonProgressHandler) ReadModuleStatistics(c echo.Context) error {
 	moduleId := c.Param("moduleId")
 

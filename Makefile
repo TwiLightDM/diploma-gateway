@@ -18,4 +18,4 @@ migrate-force:
 run:
 	go run cmd/main.go
 swagger:
-	swag init -g cmd/main.go -o internal/docs
+	swag init -g main.go -o internal/docs

@@ -20,6 +20,19 @@ func NewCourseHandler(courseClient *course_service.CourseClient) *CourseHandler 
 	return &CourseHandler{courseClient: courseClient}
 }
 
+// CreateCourse
+// @Summary Создать курс
+// @Description Создание нового курса
+// @Tags Courses
+// @Accept json
+// @Produce json
+// @Param request body dto.CourseRequest true "Данные курса"
+// @Success 200 {object} dto.CourseResponse
+// @Failure 400 {object} dto.ErrorResponse
+// @Failure 409 {object} dto.ErrorResponse
+// @Failure 500 {object} dto.ErrorResponse
+// @Security BearerAuth
+// @Router /courses [post]
 func (h *CourseHandler) CreateCourse(c echo.Context) error {
 	var request dto.CourseRequest
 	if err := c.Bind(&request); err != nil {
@@ -53,6 +66,16 @@ func (h *CourseHandler) CreateCourse(c echo.Context) error {
 	})
 }
 
+// ReadCourse
+// @Summary Получить курс
+// @Tags Courses
+// @Produce json
+// @Param id path string true "Course ID"
+// @Success 200 {object} dto.CourseResponse
+// @Failure 400 {object} dto.ErrorResponse
+// @Failure 500 {object} dto.ErrorResponse
+// @Security BearerAuth
+// @Router /courses/{id} [get]
 func (h *CourseHandler) ReadCourse(c echo.Context) error {
 	id := c.Param("id")
 	if id == "" {
@@ -79,6 +102,14 @@ func (h *CourseHandler) ReadCourse(c echo.Context) error {
 	})
 }
 
+// ReadAllCourses
+// @Summary Получить все курсы
+// @Tags Courses
+// @Produce json
+// @Success 200 {object} dto.CourseListResponse
+// @Failure 500 {object} dto.ErrorResponse
+// @Security BearerAuth
+// @Router /courses [get]
 func (h *CourseHandler) ReadAllCourses(c echo.Context) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()
@@ -107,6 +138,14 @@ func (h *CourseHandler) ReadAllCourses(c echo.Context) error {
 	})
 }
 
+// ReadAllAvailableCourses
+// @Summary Получить доступные пользователю курсы
+// @Tags Courses
+// @Produce json
+// @Success 200 {object} dto.CourseListResponse
+// @Failure 500 {object} dto.ErrorResponse
+// @Security BearerAuth
+// @Router /courses/available [get]
 func (h *CourseHandler) ReadAllAvailableCourses(c echo.Context) error {
 	userId := c.Get("user_id").(string)
 	if userId == "" {
@@ -140,6 +179,14 @@ func (h *CourseHandler) ReadAllAvailableCourses(c echo.Context) error {
 	})
 }
 
+// ReadAllCoursesByOwnerId
+// @Summary Получить мои курсы
+// @Tags Courses
+// @Produce json
+// @Success 200 {object} dto.CourseListResponse
+// @Failure 500 {object} dto.ErrorResponse
+// @Security BearerAuth
+// @Router /courses/my [get]
 func (h *CourseHandler) ReadAllCoursesByOwnerId(c echo.Context) error {
 	ownerId := c.Get("user_id").(string)
 	if ownerId == "" {
@@ -173,6 +220,18 @@ func (h *CourseHandler) ReadAllCoursesByOwnerId(c echo.Context) error {
 	})
 }
 
+// UpdateCourse
+// @Summary Обновить курс
+// @Tags Courses
+// @Accept json
+// @Produce json
+// @Param id path string true "Course ID"
+// @Param request body dto.CourseRequest true "Новые данные"
+// @Success 200 {object} dto.CourseResponse
+// @Failure 400 {object} dto.ErrorResponse
+// @Failure 500 {object} dto.ErrorResponse
+// @Security BearerAuth
+// @Router /courses/{id} [patch]
 func (h *CourseHandler) UpdateCourse(c echo.Context) error {
 	var request dto.CourseRequest
 	if err := c.Bind(&request); err != nil {
@@ -202,6 +261,16 @@ func (h *CourseHandler) UpdateCourse(c echo.Context) error {
 	})
 }
 
+// UpdatePublishedAt
+// @Summary Опубликовать курс
+// @Tags Courses
+// @Produce json
+// @Param id path string true "Course ID"
+// @Success 200 {object} dto.CourseResponse
+// @Failure 400 {object} dto.ErrorResponse
+// @Failure 500 {object} dto.ErrorResponse
+// @Security BearerAuth
+// @Router /courses/{id}/publish [patch]
 func (h *CourseHandler) UpdatePublishedAt(c echo.Context) error {
 	id := c.Param("id")
 	if id == "" {
@@ -226,6 +295,16 @@ func (h *CourseHandler) UpdatePublishedAt(c echo.Context) error {
 	})
 }
 
+// DeleteCourse
+// @Summary Удалить курс
+// @Tags Courses
+// @Produce json
+// @Param id path string true "Course ID"
+// @Success 204
+// @Failure 400 {object} dto.ErrorResponse
+// @Failure 500 {object} dto.ErrorResponse
+// @Security BearerAuth
+// @Router /courses/{id} [delete]
 func (h *CourseHandler) DeleteCourse(c echo.Context) error {
 	id := c.Param("id")
 	if id == "" {

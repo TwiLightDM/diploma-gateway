@@ -20,6 +20,18 @@ func NewLessonHandler(courseClient *course_service.CourseClient) *LessonHandler 
 	return &LessonHandler{courseClient: courseClient}
 }
 
+// CreateLesson
+// @Summary Создать урок
+// @Tags Lessons
+// @Accept json
+// @Produce json
+// @Param request body dto.LessonRequest true "Данные урока"
+// @Success 200 {object} dto.LessonResponse
+// @Failure 400 {object} dto.ErrorResponse
+// @Failure 409 {object} dto.ErrorResponse
+// @Failure 500 {object} dto.ErrorResponse
+// @Security BearerAuth
+// @Router /lessons [post]
 func (h *LessonHandler) CreateLesson(c echo.Context) error {
 	var request dto.LessonRequest
 	if err := c.Bind(&request); err != nil {
@@ -51,6 +63,16 @@ func (h *LessonHandler) CreateLesson(c echo.Context) error {
 	})
 }
 
+// ReadLesson
+// @Summary Получить урок
+// @Tags Lessons
+// @Produce json
+// @Param id path string true "Lesson ID"
+// @Success 200 {object} dto.LessonResponse
+// @Failure 400 {object} dto.ErrorResponse
+// @Failure 500 {object} dto.ErrorResponse
+// @Security BearerAuth
+// @Router /lessons/{id} [get]
 func (h *LessonHandler) ReadLesson(c echo.Context) error {
 	id := c.Param("id")
 	if id == "" {
@@ -75,6 +97,16 @@ func (h *LessonHandler) ReadLesson(c echo.Context) error {
 	})
 }
 
+// ReadAllLessonsByCourseId
+// @Summary Получить уроки модуля
+// @Tags Lessons
+// @Produce json
+// @Param module_id path string true "Module ID"
+// @Success 200 {object} dto.LessonListResponse
+// @Failure 400 {object} dto.ErrorResponse
+// @Failure 500 {object} dto.ErrorResponse
+// @Security BearerAuth
+// @Router /lessons/modules/{module_id} [get]
 func (h *LessonHandler) ReadAllLessonsByCourseId(c echo.Context) error {
 	moduleId := c.Param("module_id")
 	if moduleId == "" {
@@ -105,6 +137,18 @@ func (h *LessonHandler) ReadAllLessonsByCourseId(c echo.Context) error {
 	})
 }
 
+// UpdateLesson
+// @Summary Обновить урок
+// @Tags Lessons
+// @Accept json
+// @Produce json
+// @Param id path string true "Lesson ID"
+// @Param request body dto.LessonRequest true "Новые данные"
+// @Success 200 {object} dto.LessonResponse
+// @Failure 400 {object} dto.ErrorResponse
+// @Failure 500 {object} dto.ErrorResponse
+// @Security BearerAuth
+// @Router /lessons/{id} [patch]
 func (h *LessonHandler) UpdateLesson(c echo.Context) error {
 	var request dto.LessonRequest
 	if err := c.Bind(&request); err != nil {
@@ -134,6 +178,16 @@ func (h *LessonHandler) UpdateLesson(c echo.Context) error {
 	})
 }
 
+// DeleteLesson
+// @Summary Удалить урок
+// @Tags Lessons
+// @Produce json
+// @Param id path string true "Lesson ID"
+// @Success 204
+// @Failure 400 {object} dto.ErrorResponse
+// @Failure 500 {object} dto.ErrorResponse
+// @Security BearerAuth
+// @Router /lessons/{id} [delete]
 func (h *LessonHandler) DeleteLesson(c echo.Context) error {
 	id := c.Param("id")
 	if id == "" {

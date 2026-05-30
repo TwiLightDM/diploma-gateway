@@ -20,6 +20,18 @@ func NewModuleHandler(courseClient *course_service.CourseClient) *ModuleHandler 
 	return &ModuleHandler{courseClient: courseClient}
 }
 
+// CreateModule
+// @Summary Создать модуль
+// @Tags Modules
+// @Accept json
+// @Produce json
+// @Param request body dto.ModuleRequest true "Данные модуля"
+// @Success 200 {object} dto.ModuleResponse
+// @Failure 400 {object} dto.ErrorResponse
+// @Failure 409 {object} dto.ErrorResponse
+// @Failure 500 {object} dto.ErrorResponse
+// @Security BearerAuth
+// @Router /modules [post]
 func (h *ModuleHandler) CreateModule(c echo.Context) error {
 	var request dto.ModuleRequest
 	if err := c.Bind(&request); err != nil {
@@ -50,6 +62,16 @@ func (h *ModuleHandler) CreateModule(c echo.Context) error {
 	})
 }
 
+// ReadModule
+// @Summary Получить модуль
+// @Tags Modules
+// @Produce json
+// @Param id path string true "Module ID"
+// @Success 200 {object} dto.ModuleResponse
+// @Failure 400 {object} dto.ErrorResponse
+// @Failure 500 {object} dto.ErrorResponse
+// @Security BearerAuth
+// @Router /modules/{id} [get]
 func (h *ModuleHandler) ReadModule(c echo.Context) error {
 	id := c.Param("id")
 	if id == "" {
@@ -74,6 +96,16 @@ func (h *ModuleHandler) ReadModule(c echo.Context) error {
 	})
 }
 
+// ReadAllModulesByCourseId
+// @Summary Получить модули курса
+// @Tags Modules
+// @Produce json
+// @Param course_id path string true "Course ID"
+// @Success 200 {object} dto.ModuleListResponse
+// @Failure 400 {object} dto.ErrorResponse
+// @Failure 500 {object} dto.ErrorResponse
+// @Security BearerAuth
+// @Router /modules/courses/{course_id} [get]
 func (h *ModuleHandler) ReadAllModulesByCourseId(c echo.Context) error {
 	courseId := c.Param("course_id")
 	if courseId == "" {
@@ -105,6 +137,18 @@ func (h *ModuleHandler) ReadAllModulesByCourseId(c echo.Context) error {
 	})
 }
 
+// UpdateModule
+// @Summary Обновить модуль
+// @Tags Modules
+// @Accept json
+// @Produce json
+// @Param id path string true "Module ID"
+// @Param request body dto.ModuleRequest true "Новые данные"
+// @Success 200 {object} dto.ModuleResponse
+// @Failure 400 {object} dto.ErrorResponse
+// @Failure 500 {object} dto.ErrorResponse
+// @Security BearerAuth
+// @Router /modules/{id} [patch]
 func (h *ModuleHandler) UpdateModule(c echo.Context) error {
 	var request dto.ModuleRequest
 	if err := c.Bind(&request); err != nil {
@@ -133,6 +177,16 @@ func (h *ModuleHandler) UpdateModule(c echo.Context) error {
 	})
 }
 
+// DeleteModule
+// @Summary Удалить модуль
+// @Tags Modules
+// @Produce json
+// @Param id path string true "Module ID"
+// @Success 204
+// @Failure 400 {object} dto.ErrorResponse
+// @Failure 500 {object} dto.ErrorResponse
+// @Security BearerAuth
+// @Router /modules/{id} [delete]
 func (h *ModuleHandler) DeleteModule(c echo.Context) error {
 	id := c.Param("id")
 	if id == "" {
