@@ -48,6 +48,17 @@ services:
       - redis_data:/data
     restart: unless-stopped
 
+  frontend:
+    build:
+      context: ../diploma-frontend
+      dockerfile: Dockerfile
+    container_name: frontend
+    ports:
+      - "5173:5173"
+    volumes:
+      - ../diploma-frontend:/app
+      - /app/node_modules
+
 volumes:
   pgdata:
   minio_data:
